@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pawsera - Pet Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700;900" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="relative flex min-h-screen w-full flex-col justify-between">
+<div class="flex-grow pb-28">
+<header class="sticky top-0 z-10 flex items-center justify-between bg-background-light/80 p-4 backdrop-blur-sm dark:bg-background-dark/80">
+<button class="flex h-10 w-10 items-center justify-center rounded-full text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold text-gray-900 dark:text-white">Pet Details</h1>
+<div class="flex h-10 w-10 items-center justify-center">
+<div class="flex items-center gap-1">
+<svg class="text-primary" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M240,108a28,28,0,1,1-28-28A28,28,0,0,1,240,108ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM92,88A28,28,0,1,0,64,60,28,28,0,0,0,92,88Zm72,0a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm23.12,60.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0A35.25,35.25,0,0,1,69,148.82,40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0,40,40,0,0,0,34.73-72Z" fill="currentColor"></path></svg>
+<span class="text-lg font-bold text-gray-900 dark:text-white">Pawsera</span>
+</div>
+</div>
+</header>
+<main class="p-4">
+<div class="flex flex-col items-center gap-4">
+<div class="relative">
+<img alt="Buddy the dog" class="h-32 w-32 rounded-full border-4 border-white dark:border-background-dark object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn77RTpli_0BLmwAANFdJLQ2deNSSsrx_KSj5KSjghWawStvIWwRzZ71uos9wAqZp8yoStJYCg5qvk8tT38vyoactLUvKIssFfhWa-bpzG_fROmHQPdf4xMk2BXmekUmP8TyU3317IQ0RyZz8aex9-1cxGFy578QF37TaGqfW8W6G-JH5Owv9w4rxfB-FkjyGYSzoKanXVDHTUc9ZiFgOxPPYNQmyTNd_Vl-waIjRvUrBxXCp13jCWaAY_c1l_j35YmFQsn5b8sBs"/>
+<button class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+<div class="text-center">
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">Buddy</h2>
+<p class="text-base text-gray-500 dark:text-gray-400">Golden Retriever, 3 years old</p>
+</div>
+</div>
+<div class="mt-8 space-y-6">
+<section>
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Vaccination Records</h3>
+<div class="space-y-2">
+<div class="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm dark:bg-gray-800">
+<div>
+<p class="font-medium text-gray-800 dark:text-gray-200">Rabies</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">2023-08-15</p>
+</div>
+<button class="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+<div class="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm dark:bg-gray-800">
+<div>
+<p class="font-medium text-gray-800 dark:text-gray-200">Distemper</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">2023-08-15</p>
+</div>
+<button class="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+</div>
+</section>
+<section>
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Medical History</h3>
+<div class="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm dark:bg-gray-800">
+<div>
+<p class="font-medium text-gray-800 dark:text-gray-200">Medical Records</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Upload documents</p>
+</div>
+<button class="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">upload</span>
+</button>
+</div>
+</section>
+<section>
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Milestones</h3>
+<div class="space-y-2">
+<div class="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm dark:bg-gray-800">
+<div>
+<p class="font-medium text-gray-800 dark:text-gray-200">First vet visit</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">2021-08-15</p>
+</div>
+<button class="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+<div class="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm dark:bg-gray-800">
+<div>
+<p class="font-medium text-gray-800 dark:text-gray-200">First walk</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">2021-08-22</p>
+</div>
+<button class="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<nav class="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-background-light/90 px-4 pt-2 pb-4 backdrop-blur-sm dark:border-gray-700 dark:bg-background-dark/90">
+<div class="flex justify-around">
+<a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-xs font-medium">Dashboard</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">pets</span>
+<span class="text-xs font-medium">My Pets</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-xs font-medium">Appointments</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">pin_drop</span>
+<span class="text-xs font-medium">Nearby Vets</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-xs font-medium">Settings</span>
+</a>
+</div>
+</nav>
+</div>
+
+</body></html>

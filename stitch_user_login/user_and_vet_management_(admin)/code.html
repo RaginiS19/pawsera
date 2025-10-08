@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ee822b",
+              "background-light": "#f8f7f6",
+              "background-dark": "#221810",
+            },
+            fontFamily: {
+              display: ["Manrope"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<title>Pawsera - Vet Approval Dashboard</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col">
+<header class="sticky top-0 z-10 border-b border-primary/20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="mx-auto flex max-w-7xl items-center justify-between p-4">
+<div class="flex items-center gap-2">
+<svg class="text-primary" fill="currentColor" height="32" viewBox="0 0 256 256" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M212,80a28,28,0,1,0,28,28A28,28,0,0,0,212,80Zm0,40a12,12,0,1,1,12-12A12,12,0,0,1,212,120ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM44,120a12,12,0,1,1,12-12A12,12,0,0,1,44,120ZM92,88A28,28,0,1,0,64,60,28,28,0,0,0,92,88Zm0-40A12,12,0,1,1,80,60,12,12,0,0,1,92,48Zm72,40a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm0-40a12,12,0,1,1-12,12A12,12,0,0,1,164,48Zm23.12,100.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0A35.25,35.25,0,0,1,69,148.82,40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0,40,40,0,0,0,34.73-72ZM168,208a24,24,0,0,1-9.45-1.93,80.14,80.14,0,0,0-61.19,0,24,24,0,0,1-20.71-43.26,51.22,51.22,0,0,0,24.46-30.67,28,28,0,0,1,53.78,0,51.27,51.27,0,0,0,24.53,30.71A24,24,0,0,1,168,208Z"></path>
+</svg>
+<h1 class="text-2xl font-bold text-background-dark dark:text-background-light">Pawsera</h1>
+</div>
+</div>
+</header>
+<main class="flex-1 px-4 py-6">
+<h2 class="mb-6 text-2xl font-bold text-background-dark dark:text-background-light">
+          Vet Approval Workflow
+        </h2>
+<section class="mb-8">
+<h3 class="mb-4 text-lg font-semibold text-background-dark dark:text-background-light">
+            Pending Applications
+          </h3>
+<div class="space-y-4">
+<div class="rounded-lg bg-background-light p-4 shadow-sm dark:bg-background-dark/50">
+<div class="flex items-center gap-4">
+<img alt="Dr. Ethan Bennett's avatar" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCneXGEWrdacExDjEfaZAyyXUlQbAybB0Vs-tbONPfxPD51_y7o-2UhaITeVrUTA1GuUgagfHChRu4cbwmOBLGXR3MPK4-zU2zaluRENsFLW3AJrrGUODKI7IIA_gnfc7pQt0QbbyG0gT9zrY0h6s7-MzzxalSaXccQQkXPNtdT_su5Ry7GJrL4nAUjp6nprAUIwvq1GyzDtSldOusFzzhmp8nGusdpYrJbtuNzu9a2rg1yHhSJbqHriWdyzg4EpYw3i6YIaGC9jA4"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Dr. Ethan Bennett
+                  </p>
+<p class="text-sm font-medium text-primary">Application Pending</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> info </span>
+</button>
+</div>
+<div class="mt-4 flex gap-3">
+<button class="flex-1 rounded-full bg-primary text-white py-3 text-sm font-semibold transition-colors hover:bg-primary/80">
+                  Approve
+                </button>
+<button class="flex-1 rounded-full border border-primary/20 text-primary py-3 text-sm font-semibold transition-colors hover:bg-primary/10">
+                  Deny
+                </button>
+</div>
+</div>
+<div class="rounded-lg bg-background-light p-4 shadow-sm dark:bg-background-dark/50">
+<div class="flex items-center gap-4">
+<img alt="Dr. Noah Harper's avatar" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjLEoN91a-Plqr7gCSJ1G7ufvcmkc1rvHCGDfo-CckYQyVYK_LNhxHAia0CDF_tTmTeqxtEH8D33UDXftZeM0nKF2fNzO5whIEVaSwFXm_ao873sfIXyFHkN_o1HeFm1gwiy-Xn_6Ja_xoJH_cWS0vETcU7hQlBR8h3raE5BjIhLGZ857MrvvIboyYTxOXovcrKQGFaJngUiLOrAqgVtU4lOAdvzGBfNCyLqmvgGtmV_RcTWt8Kf_6tuoMf_gUU3zdTKJYNRUnjFA"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Dr. Noah Harper
+                  </p>
+<p class="text-sm font-medium text-primary">Application Pending</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> info </span>
+</button>
+</div>
+<div class="mt-4 flex gap-3">
+<button class="flex-1 rounded-full bg-primary text-white py-3 text-sm font-semibold transition-colors hover:bg-primary/80">
+                  Approve
+                </button>
+<button class="flex-1 rounded-full border border-primary/20 text-primary py-3 text-sm font-semibold transition-colors hover:bg-primary/10">
+                  Deny
+                </button>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h3 class="mb-4 text-lg font-semibold text-background-dark dark:text-background-light">
+            All Users
+          </h3>
+<div class="space-y-4" x-data="{ openTab: 'all' }">
+<div class="flex space-x-2 border-b border-primary/20">
+<button :class="{ 'border-primary text-primary': openTab === 'all', 'border-transparent text-primary/70': openTab !== 'all' }" @click="openTab = 'all'" class="flex-1 py-2 text-center text-sm font-medium border-b-2 transition-colors">
+                All
+              </button>
+<button :class="{ 'border-primary text-primary': openTab === 'vets', 'border-transparent text-primary/70': openTab !== 'vets' }" @click="openTab = 'vets'" class="flex-1 py-2 text-center text-sm font-medium border-b-2 transition-colors">
+                Veterinarians
+              </button>
+<button :class="{ 'border-primary text-primary': openTab === 'owners', 'border-transparent text-primary/70': openTab !== 'owners' }" @click="openTab = 'owners'" class="flex-1 py-2 text-center text-sm font-medium border-b-2 transition-colors">
+                Pet Owners
+              </button>
+</div>
+<div class="space-y-4" x-show="openTab === 'all'">
+<div class="flex items-center gap-4 rounded-lg bg-background-light p-3 shadow-sm dark:bg-background-dark/50">
+<img alt="Sophia Clark's avatar" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDruUg7WMTAhZe2_Gu-AoJnIVOs-6Va1zlxvnDHV_hDzjFI9IPw-WMaS_cheBRbFgUjVZupgKvmP0GL6f0oj11J29dUI1eOjN30t7RC4GfBYGl1wJ-TG7XGXXZAwU94CVEdCaa5V-owmXY0DKRTr_1RGrGP8HWTMOKu-DXCwzLoyZKbpNMYhDv5BPceajcGlg4IPvxuX2HV2FKxveMcyje7lI-5gVT4J6MGpsA-RW1O2pXugrOiHafdxrH8-giOeeib8G55ng60VdQ"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Sophia Clark
+                  </p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Pet Owner</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> edit </span>
+</button>
+</div>
+<div class="flex items-center gap-4 rounded-lg bg-background-light p-3 shadow-sm dark:bg-background-dark/50">
+<img alt="Dr. Olivia Reed's avatar" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1JOYccOfZA3E7n0Yzbti0Zmlvl5AcYjOtR52isdiO1nYNBEa0GAY41B98VDS7Ils2Td-rUONvbKPkkED2YPtzsMiR5zZDP-nAqUxvl_DWbPbyP3XNhX6onTlXBWHSIrMjjPW8hw6M6VqX9JQj8E0LCXLloFa5yEtYfjJWcIXKNZvHRmS4R0Q461j0KR7sdKGIgwR-ltnfHrMjxvAx34RKdCBxqXSBUHwIdkjxYxKxHN4h4XvHwSGsMHKTMHFtFgkR-VtSIO20oJU"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Dr. Olivia Reed
+                  </p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Approved Vet</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> edit </span>
+</button>
+</div>
+<div class="flex items-center gap-4 rounded-lg bg-background-light p-3 shadow-sm dark:bg-background-dark/50">
+<img alt="Liam Carter's avatar" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUha_p4eL7M2lEiHmHK-PI2N_TeY_6kW7Yniox62MtsNKGnERBPnbP4yTdhyPpD5otiMjv4vj0plTN81SpoUVer920ucP1D63XDQmb6Q4Zt8lXZuOaiI_LhqcY3UCQ1ZzCS7mg-o1r0axXUTCZrzNosCn7IedDA6wf1S8uBmDNJJ8Foj519mLkb0MGGefgmMK8h3t-xlanIBHvGGP55aP36TZIN97XVqqDiU97pwETmcQr5LnD94dRRRJ5VTBI6EWBWC_ceQHhpEo"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Liam Carter
+                  </p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Pet Owner</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> edit </span>
+</button>
+</div>
+<div class="flex items-center gap-4 rounded-lg bg-background-light p-3 shadow-sm dark:bg-background-dark/50">
+<img alt="Dr. Ava Foster's avatar" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvHwuV_KvWC9Hp8rB_HDeHqUYPwS2zwtF6eUSCLzZKjqqRp73RRmKYTQt4Vh3FJx7TriocEJRIiXGwDbXrQvMhMD9Ewse64VFmINkTKFWqnF9WkZ2t0g6OSPEFsimyHWN1cMtzlIV5JBZsl14arPN_Z3ansCKKeKQgLpBAFnLFH8E9emiY3Fpsbfs7n4kEWmN0u4yIJ5Q-e7KsDgTa_z1K-QQg6kCsrarcvjciLgw8Q_TClTbG7jScLUdGUyPm1DfKyv3KS2KwKqc"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Dr. Ava Foster
+                  </p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Approved Vet</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> edit </span>
+</button>
+</div>
+</div>
+<div class="space-y-4" x-show="openTab === 'vets'">
+<div class="flex items-center gap-4 rounded-lg bg-background-light p-3 shadow-sm dark:bg-background-dark/50">
+<img alt="Dr. Olivia Reed's avatar" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1JOYccOfZA3E7n0Yzbti0Zmlvl5AcYjOtR52isdiO1nYNBEa0GAY41B98VDS7Ils2Td-rUONvbKPkkED2YPtzsMiR5zZDP-nAqUxvl_DWbPbyP3XNhX6onTlXBWHSIrMjjPW8hw6M6VqX9JQj8E0LCXLloFa5yEtYfjJWcIXKNZvHRmS4R0Q461j0KR7sdKGIgwR-ltnfHrMjxvAx34RKdCBxqXSBUHwIdkjxYxKxHN4h4XvHwSGsMHKTMHFtFgkR-VtSIO20oJU"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Dr. Olivia Reed
+                  </p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Approved Vet</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> edit </span>
+</button>
+</div>
+<div class="flex items-center gap-4 rounded-lg bg-background-light p-3 shadow-sm dark:bg-background-dark/50">
+<img alt="Dr. Ava Foster's avatar" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvHwuV_KvWC9Hp8rB_HDeHqUYPwS2zwtF6eUSCLzZKjqqRp73RRmKYTQt4Vh3FJx7TriocEJRIiXGwDbXrQvMhMD9Ewse64VFmINkTKFWqnF9WkZ2t0g6OSPEFsimyHWN1cMtzlIV5JBZsl14arPN_Z3ansCKKeKQgLpBAFnLFH8E9emiY3Fpsbfs7n4kEWmN0u4yIJ5Q-e7KsDgTa_z1K-QQg6kCsrarcvjciLgw8Q_TClTbG7jScLUdGUyPm1DfKyv3KS2KwKqc"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Dr. Ava Foster
+                  </p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Approved Vet</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> edit </span>
+</button>
+</div>
+</div>
+<div class="space-y-4" x-show="openTab === 'owners'">
+<div class="flex items-center gap-4 rounded-lg bg-background-light p-3 shadow-sm dark:bg-background-dark/50">
+<img alt="Sophia Clark's avatar" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDruUg7WMTAhZe2_Gu-AoJnIVOs-6Va1zlxvnDHV_hDzjFI9IPw-WMaS_cheBRbFgUjVZupgKvmP0GL6f0oj11J29dUI1eOjN30t7RC4GfBYGl1wJ-TG7XGXXZAwU94CVEdCaa5V-owmXY0DKRTr_1RGrGP8HWTMOKu-DXCwzLoyZKbpNMYhDv5BPceajcGlg4IPvxuX2HV2FKxveMcyje7lI-5gVT4J6MGpsA-RW1O2pXugrOiHafdxrH8-giOeeib8G55ng60VdQ"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Sophia Clark
+                  </p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Pet Owner</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> edit </span>
+</button>
+</div>
+<div class="flex items-center gap-4 rounded-lg bg-background-light p-3 shadow-sm dark:bg-background-dark/50">
+<img alt="Liam Carter's avatar" class="h-12 w-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUha_p4eL7M2lEiHmHK-PI2N_TeY_6kW7Yniox62MtsNKGnERBPnbP4yTdhyPpD5otiMjv4vj0plTN81SpoUVer920ucP1D63XDQmb6Q4Zt8lXZuOaiI_LhqcY3UCQ1ZzCS7mg-o1r0axXUTCZrzNosCn7IedDA6wf1S8uBmDNJJ8Foj519mLkb0MGGefgmMK8h3t-xlanIBHvGGP55aP36TZIN97XVqqDiU97pwETmcQr5LnD94dRRRJ5VTBI6EWBWC_ceQHhpEo"/>
+<div class="flex-1">
+<p class="font-semibold text-background-dark dark:text-background-light">
+                    Liam Carter
+                  </p>
+<p class="text-sm text-primary/80 dark:text-primary/70">Pet Owner</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary/30">
+<span class="material-symbols-outlined"> edit </span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="sticky bottom-0 z-10 border-t border-primary/20 bg-background-light/80 pb-safe dark:bg-background-dark/80 backdrop-blur-sm">
+<nav class="mx-auto flex max-w-7xl justify-around p-2">
+<a class="flex flex-col items-center gap-1 p-2 text-primary/70 dark:text-primary/60" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-xs font-medium">Dashboard</span>
+</a>
+<a class="flex flex-col items-center gap-1 p-2 text-primary/70 dark:text-primary/60" href="#">
+<span class="material-symbols-outlined">pets</span>
+<span class="text-xs font-medium">Pet Records</span>
+</a>
+<a class="flex flex-col items-center gap-1 p-2 text-primary/70 dark:text-primary/60" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-xs font-medium">Appointments</span>
+</a>
+<a class="flex flex-col items-center gap-1 rounded-lg bg-primary/10 p-2 text-primary dark:bg-primary/20" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-xs font-bold">Users</span>
+</a>
+<a class="flex flex-col items-center gap-1 p-2 text-primary/70 dark:text-primary/60" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-xs font-medium">Settings</span>
+</a>
+</nav>
+</footer>
+</div>
+<script defer="" src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+</body></html>

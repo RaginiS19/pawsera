@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Pawsera - User Management</title>
+    <link href="styles.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <div class="flex flex-col h-screen">
+        <header class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <h1 class="text-lg font-semibold text-gray-900 dark:text-white">User Management</h1>
+            <div class="w-10"></div>
+        </header>
+
+        <main class="flex-grow p-4 overflow-y-auto">
+            <div class="max-w-md mx-auto space-y-4">
+                <!-- User Card 1 - Pet Owner -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">person</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Liam Carter</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Pet Owner</p>
+                        </div>
+                        <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                            <span class="material-symbols-outlined text-gray-400">edit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Card 2 - Pending Veterinarian -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">person</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Olivia Bennett</h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                                    Pending Approval
+                                </span>
+                            </div>
+                        </div>
+                        <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                            <span class="material-symbols-outlined text-gray-400">edit</span>
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">check</span>
+                            Approve
+                        </button>
+                        <button class="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">close</span>
+                            Deny
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Card 3 - Approved Veterinarian -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">person</span>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Ethan Walker</h3>
+                                <span class="material-symbols-outlined text-primary text-sm">verified</span>
+                            </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Veterinarian</p>
+                        </div>
+                        <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                            <span class="material-symbols-outlined text-gray-400">edit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Card 4 - Pet Owner -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">person</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Sophia Hayes</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Pet Owner</p>
+                        </div>
+                        <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                            <span class="material-symbols-outlined text-gray-400">edit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Card 5 - Pending Veterinarian -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">person</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Noah Thompson</h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                                    Pending Approval
+                                </span>
+                            </div>
+                        </div>
+                        <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                            <span class="material-symbols-outlined text-gray-400">edit</span>
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">check</span>
+                            Approve
+                        </button>
+                        <button class="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">close</span>
+                            Deny
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Card 6 - Approved Veterinarian -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">person</span>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Ava Mitchell</h3>
+                                <span class="material-symbols-outlined text-primary text-sm">verified</span>
+                            </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Veterinarian</p>
+                        </div>
+                        <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                            <span class="material-symbols-outlined text-gray-400">edit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="border-t border-gray-200 dark:border-gray-700">
+            <nav class="flex justify-around p-2">
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="text-xs">Dashboard</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">pets</span>
+                    <span class="text-xs">Pets</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                    <span class="text-xs">Appointments</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-primary" href="#">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">people</span>
+                    <span class="text-xs font-bold">Users</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="text-xs">Settings</span>
+                </a>
+            </nav>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pawsera Dashboard - Admin View</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#ee7c2b",
+                    "background-light": "#f8f7f6",
+                    "background-dark": "#221810",
+                },
+                fontFamily: {
+                    "display": ["Manrope"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+            },
+        },
+    }
+</script>
+<style>
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+    }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-zinc-900 dark:text-zinc-100">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-10">
+<div class="container mx-auto px-4 py-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<svg class="text-primary" height="28" viewBox="0 0 256 256" width="28" xmlns="http://www.w3.org/2000/svg">
+<path d="M212 80a28 28 0 1 0 28 28a28 28 0 0 0-28-28Zm0 40a12 12 0 1 1 12-12a12 12 0 0 1-12 12ZM72 108a28 28 0 1 0-28 28a28 28 0 0 0 28-28Zm-28 12a12 12 0 1 1 12-12a12 12 0 0 1-12 12Zm48-60a28 28 0 1 0-28-28a28 28 0 0 0 28 28Zm0-40a12 12 0 1 1-12 12a12 12 0 0 1 12-12Zm72 40a28 28 0 1 0-28-28a28 28 0 0 0 28 28Zm0-40a12 12 0 1 1-12 12a12 12 0 0 1 12-12Zm23.12 100.86a35.3 35.3 0 0 1-16.87-21.14a44 44 0 0 0-84.5 0a35.25 35.25 0 0 1-16.88 21.18A40 40 0 0 0 88 224a39.48 39.48 0 0 0 15.52-3.13a64.09 64.09 0 0 1 48.87 0A40 40 0 0 0 187.12 148.86ZM168 208a24 24 0 0 1-9.45-1.93a80.14 80.14 0 0 0-61.19 0a24 24 0 0 1-20.71-43.26a51.22 51.22 0 0 0 24.46-30.67a28 28 0 0 1 53.78 0a51.27 51.27 0 0 0 24.53 30.71A24 24 0 0 1 168 208Z" fill="currentColor"></path>
+</svg>
+<h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">Pawsera</h1>
+</div>
+</div>
+</div>
+<div class="px-4 py-2">
+<div class="flex h-12 flex-1 items-center justify-center rounded-lg bg-zinc-200 dark:bg-zinc-800 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-2 text-sm font-medium transition-all has-[:checked]:bg-transparent has-[:checked]:shadow-none text-zinc-600 dark:text-zinc-400">
+<span class="truncate">Vet View</span>
+<input class="invisible w-0" name="view-toggle" type="radio" value="Vet View"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-2 text-sm font-medium transition-all has-[:checked]:bg-primary has-[:checked]:text-white has-[:checked]:shadow-md text-zinc-600 dark:text-zinc-400">
+<span class="truncate">Admin View</span>
+<input checked="" class="invisible w-0" name="view-toggle" type="radio" value="Admin View"/>
+</label>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 py-6 space-y-8">
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Pending Approvals</h2>
+<a class="text-sm font-medium text-primary hover:underline" href="#">View All</a>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm">
+<img alt="Dr. Alex Chen" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcx2v5g251lY_s393SjGfT433w3dG-3jXq2U6xI-L5w4bO7y4pZ1f8xXz9n_v-y0bO4j-l-i-K9c-p-wR0yNl-A9b-c-D_e_r-f-G0hI-j_k-L_m-N-o-p-q-r-s-t-u-v-w-x-y-z"/>
+<div class="flex-grow">
+<p class="font-semibold text-zinc-900 dark:text-zinc-100">Dr. Alex Chen</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">DVM, Small Animal Specialist</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+<button class="p-2 rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition-colors dark:bg-green-900/50 dark:text-green-400 dark:hover:bg-green-900">
+<span class="material-symbols-outlined text-xl">check</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm">
+<img alt="Dr. Sofia Rodriguez" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_9vW_3w8xV_4t_2z-1_0Y_xY-W_v_U_T_s-R_q_P_o_N_m_L_k_J_i_H_g_F_e_D_c_B_a-z-y-x-w-v-u-t-s-r-q-p-o-n-m-l-k-j-i-h-g-f-e-d-c-b-a"/>
+<div class="flex-grow">
+<p class="font-semibold text-zinc-900 dark:text-zinc-100">Dr. Sofia Rodriguez</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">VMD, Emergency &amp; Critical Care</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+<button class="p-2 rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition-colors dark:bg-green-900/50 dark:text-green-400 dark:hover:bg-green-900">
+<span class="material-symbols-outlined text-xl">check</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">User Management</h2>
+<div class="grid grid-cols-2 gap-4">
+<a class="flex flex-col items-center justify-center gap-2 p-4 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-all text-center" href="#">
+<span class="material-symbols-outlined text-3xl">person_add</span>
+<span class="text-sm font-medium">Add New User</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-2 p-4 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-all text-center" href="#">
+<span class="material-symbols-outlined text-3xl">manage_accounts</span>
+<span class="text-sm font-medium">Manage Vets</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-2 p-4 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-all text-center" href="#">
+<span class="material-symbols-outlined text-3xl">group</span>
+<span class="text-sm font-medium">All Users</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-2 p-4 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 transition-all text-center" href="#">
+<span class="material-symbols-outlined text-3xl">admin_panel_settings</span>
+<span class="text-sm font-medium">Roles &amp; Permissions</span>
+</a>
+</div>
+</section>
+<section>
+<h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">System Activity</h2>
+<div class="space-y-3">
+<div class="flex items-start gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm">
+<span class="material-symbols-outlined text-primary mt-1">verified_user</span>
+<div class="flex-grow">
+<p class="font-medium text-zinc-900 dark:text-zinc-100">Vet account for Dr. Lee approved</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">Admin_JohnDoe - 2 hours ago</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm">
+<span class="material-symbols-outlined text-primary mt-1">person_add</span>
+<div class="flex-grow">
+<p class="font-medium text-zinc-900 dark:text-zinc-100">New user 'sarah_p' registered</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">System - 5 hours ago</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm">
+<span class="material-symbols-outlined text-primary mt-1">error</span>
+<div class="flex-grow">
+<p class="font-medium text-zinc-900 dark:text-zinc-100">Failed login attempt for 'admin'</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">IP: 192.168.1.10 - 1 day ago</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="sticky bottom-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-t border-zinc-200 dark:border-zinc-800">
+<nav class="container mx-auto px-4 py-2 flex justify-around">
+<a class="flex flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors w-1/5" href="#">
+<span class="material-symbols-outlined">space_dashboard</span>
+<p class="text-xs font-medium">Vet View</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-primary w-1/5" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">shield_person</span>
+<p class="text-xs font-medium">Admin View</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors w-1/5" href="#">
+<span class="material-symbols-outlined">group</span>
+<p class="text-xs font-medium">Users</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors w-1/5" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<p class="text-xs font-medium">Analytics</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors w-1/5" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-xs font-medium">Settings</p>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>

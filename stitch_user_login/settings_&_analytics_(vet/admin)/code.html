@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<title>Pawsera</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ee822b",
+            "background-light": "#f8f7f6",
+            "background-dark": "#221810",
+          },
+          fontFamily: {
+            "display": ["Manrope"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="container mx-auto px-4">
+<div class="flex items-center justify-between py-4 border-b border-gray-200 dark:border-gray-800">
+<div class="flex items-center gap-2">
+<svg class="text-primary" fill="currentColor" height="28px" viewBox="0 0 256 256" width="28px" xmlns="http://www.w3.org/2000/svg">
+<path d="M212,80a28,28,0,1,0,28,28A28,28,0,0,0,212,80Zm0,40a12,12,0,1,1,12-12A12,12,0,0,1,212,120ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM44,120a12,12,0,1,1,12-12A12,12,0,0,1,44,120ZM92,88A28,28,0,1,0,64,60,28,28,0,0,0,92,88Zm0-40A12,12,0,1,1,80,60,12,12,0,0,1,92,48Zm72,40a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm0-40a12,12,0,1,1-12,12A12,12,0,0,1,164,48Zm23.12,100.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0A35.25,35.25,0,0,1,69,148.82,40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0,40,40,0,0,0,34.73-72ZM168,208a24,24,0,0,1-9.45-1.93,80.14,80.14,0,0,0-61.19,0,24,24,0,0,1-20.71-43.26,51.22,51.22,0,0,0,24.46-30.67,28,28,0,0,1,53.78,0,51.27,51.27,0,0,0,24.53,30.71A24,24,0,0,1,168,208Z"></path>
+</svg>
+<h1 class="text-2xl font-bold text-gray-900 dark:text-white">Pawsera</h1>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-gray-800 dark:text-gray-200">settings</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 py-6">
+<div class="space-y-8">
+<div>
+<h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Analytics</h2>
+<div class="bg-white dark:bg-background-dark/50 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-lg font-semibold text-gray-900 dark:text-white">Appointment Frequency</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Last 30 Days</p>
+</div>
+<div class="text-right">
+<p class="text-3xl font-bold text-gray-900 dark:text-white">+15%</p>
+<p class="text-sm font-medium text-green-500">+1.2% vs last month</p>
+</div>
+</div>
+<div class="h-48">
+<svg fill="none" height="100%" preserveAspectRatio="none" viewBox="0 0 472 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient gradientUnits="userSpaceOnUse" id="chartGradient" x1="0" x2="0" y1="0" y2="150">
+<stop stop-color="#ee822b" stop-opacity="0.4"></stop>
+<stop offset="1" stop-color="#ee822b" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<path d="M0 109 C 18.1538 109 18.1538 21 36.3077 21 C 54.4615 21 54.4615 41 72.6154 41 C 90.7692 41 90.7692 93 108.923 93 C 127.077 93 127.077 33 145.231 33 C 163.385 33 163.385 101 181.538 101 C 199.692 101 199.692 61 217.846 61 C 236 61 236 45 254.154 45 C 272.308 45 272.308 121 290.462 121 C 308.615 121 308.615 149 326.769 149 C 344.923 149 344.923 1 363.077 1 C 381.231 1 381.231 81 399.385 81 C 417.538 81 417.538 129 435.692 129 C 453.846 129 453.846 25 472 25 V 150 H 0 Z" fill="url(#chartGradient)"></path>
+<path d="M0 109 C 18.1538 109 18.1538 21 36.3077 21 C 54.4615 21 54.4615 41 72.6154 41 C 90.7692 41 90.7692 93 108.923 93 C 127.077 93 127.077 33 145.231 33 C 163.385 33 163.385 101 181.538 101 C 199.692 101 199.692 61 217.846 61 C 236 61 236 45 254.154 45 C 272.308 45 272.308 121 290.462 121 C 308.615 121 308.615 149 326.769 149 C 344.923 149 344.923 1 363.077 1 C 381.231 1 381.231 81 399.385 81 C 417.538 81 417.538 129 435.692 129 C 453.846 129 453.846 25 472 25" stroke="#ee822b" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="flex justify-around text-xs font-bold text-gray-500 dark:text-gray-400 mt-2">
+<span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Pet Health Trends</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="bg-white dark:bg-background-dark/50 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+<p class="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Average Weight Change</p>
+<p class="text-3xl font-bold text-primary">+2.5 lbs</p>
+</div>
+<div class="bg-white dark:bg-background-dark/50 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+<p class="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Common Health Issues</p>
+<p class="text-3xl font-bold text-primary">Skin Allergies</p>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Settings</h2>
+<div class="bg-white dark:bg-background-dark/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 divide-y divide-gray-200 dark:divide-gray-800">
+<a class="flex items-center justify-between p-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200" href="#">
+<span class="text-lg text-gray-800 dark:text-gray-200">Profile Management</span>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200" href="#">
+<span class="text-lg text-gray-800 dark:text-gray-200">Notification Preferences</span>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</a>
+</div>
+</div>
+</div>
+</main>
+<footer class="sticky bottom-0 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-sm border-t border-gray-200 dark:border-gray-800">
+<nav class="container mx-auto flex justify-around items-center h-20">
+<a class="flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-xs font-medium">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">pets</span>
+<span class="text-xs font-medium">Pet Records</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-xs font-medium">Appointments</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-xs font-medium">Users</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-primary dark:text-primary" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-xs font-bold">Settings</span>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>

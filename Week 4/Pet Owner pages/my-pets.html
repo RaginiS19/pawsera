@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>My Pets</title>
+    <link href="styles.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810",
+                        "card-light": "#f8f7f6",
+                        "card-dark": "#221810"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <div class="flex flex-col h-screen">
+        <header class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <h1 class="text-lg font-semibold text-gray-900 dark:text-white">My Pets</h1>
+            <div class="w-10"></div>
+        </header>
+
+        <main class="flex-grow p-4 overflow-y-auto">
+            <div class="max-w-md mx-auto space-y-4">
+                <!-- Pet Card 1 -->
+                <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary text-2xl">pets</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Buddy</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Golden Retriever • 3 years old</p>
+                            <div class="flex gap-4 mt-2">
+                                <a href="#" class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">Records</a>
+                                <a href="#" class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">History</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pet Card 2 -->
+                <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary text-2xl">pets</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Luna</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Siamese Cat • 2 years old</p>
+                            <div class="flex gap-4 mt-2">
+                                <a href="#" class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">Records</a>
+                                <a href="#" class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">History</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pet Card 3 -->
+                <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary text-2xl">pets</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Max</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">German Shepherd • 5 years old</p>
+                            <div class="flex gap-4 mt-2">
+                                <a href="#" class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">Records</a>
+                                <a href="#" class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">History</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="border-t border-gray-200 dark:border-gray-700 p-4">
+            <button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">add</span>
+                <span>Add a New Pet</span>
+            </button>
+        </footer>
+    </div>
+</body>
+</html>

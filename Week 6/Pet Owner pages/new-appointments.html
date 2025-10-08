@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Stitch Design - New Appointment</title>
+    <link href="styles.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810",
+                        "content-light": "#f8f7f6",
+                        "content-dark": "#221810",
+                        "subtle-light": "#f8f7f6",
+                        "subtle-dark": "#221810",
+                        "surface-light": "#f8f7f6",
+                        "surface-dark": "#221810"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <div class="flex flex-col h-screen">
+        <header class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <h1 class="text-lg font-semibold text-gray-900 dark:text-white">New Appointment</h1>
+            <div class="w-10"></div>
+        </header>
+
+        <main class="flex-grow p-4">
+            <div class="max-w-md mx-auto space-y-6">
+                <!-- Select Veterinarian -->
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Select Veterinarian</h2>
+                    <div class="space-y-3">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:border-primary transition-colors cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary">person</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-900 dark:text-white">Dr. Sarah Johnson</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">General Practice</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:border-primary transition-colors cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary">person</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-900 dark:text-white">Dr. Mike Chen</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Surgery Specialist</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Select Date -->
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Select Date</h2>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                        <div class="grid grid-cols-7 gap-2 text-center">
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">S</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">M</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">T</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">W</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">T</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">F</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">S</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">1</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">2</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">3</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">4</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">5</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">6</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">7</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">8</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">9</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">10</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">11</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">12</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">13</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">14</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">15</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">16</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">17</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">18</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">19</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">20</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">21</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">22</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">23</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">24</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">25</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">26</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">27</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">28</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">29</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">30</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 py-2">31</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Select Time -->
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Select Time</h2>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm hover:border-primary hover:text-primary transition-colors">9:00 AM</button>
+                        <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm hover:border-primary hover:text-primary transition-colors">10:00 AM</button>
+                        <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm hover:border-primary hover:text-primary transition-colors">11:00 AM</button>
+                        <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm hover:border-primary hover:text-primary transition-colors">2:00 PM</button>
+                        <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm hover:border-primary hover:text-primary transition-colors">3:00 PM</button>
+                        <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 text-sm hover:border-primary hover:text-primary transition-colors">4:00 PM</button>
+                    </div>
+                </div>
+
+                <!-- Purpose of Visit -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Purpose of Visit</label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent form-textarea" placeholder="Describe the reason for the appointment..."></textarea>
+                </div>
+
+                <!-- Book Appointment Button -->
+                <button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
+                    Book Appointment
+                </button>
+            </div>
+        </main>
+
+        <footer class="border-t border-gray-200 dark:border-gray-700">
+            <nav class="flex justify-around p-2">
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">home</span>
+                    <span class="text-xs">Dashboard</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">pets</span>
+                    <span class="text-xs">My Pets</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-primary" href="#">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">calendar_today</span>
+                    <span class="text-xs font-bold">Appointments</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">local_hospital</span>
+                    <span class="text-xs">Nearby Vets</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="text-xs">Settings</span>
+                </a>
+            </nav>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<title>Pawsera - Settings &amp; Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#ee7c2b",
+            "background-light": "#f6f8f7",
+            "background-dark": "#122017",
+          },
+          fontFamily: {
+            display: ["Manrope", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      min-height: 100dvh;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">pets</span>
+<span class="text-xl font-bold text-gray-900 dark:text-white">Pawsera</span>
+</div>
+<button class="p-2">
+<span class="material-symbols-outlined text-gray-800 dark:text-gray-200">more_vert</span>
+</button>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto pb-28">
+<div class="px-4 py-6">
+<h1 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Settings &amp; Analytics</h1>
+<div class="mb-8 p-4 rounded-xl bg-white dark:bg-black/20">
+<h2 class="text-lg font-bold mb-4 text-gray-900 dark:text-white">Appointment Frequency</h2>
+<div class="relative h-64">
+<div class="absolute inset-0 grid grid-rows-5">
+<div class="border-b border-gray-200 dark:border-gray-700/50"></div>
+<div class="border-b border-gray-200 dark:border-gray-700/50"></div>
+<div class="border-b border-gray-200 dark:border-gray-700/50"></div>
+<div class="border-b border-gray-200 dark:border-gray-700/50"></div>
+<div></div>
+</div>
+<div class="absolute inset-0 flex items-end justify-between px-2 pb-6">
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-2/3 bg-primary/30 rounded-t-lg" style="height: 45%;"></div>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-2/3 bg-primary/30 rounded-t-lg" style="height: 60%;"></div>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-2/3 bg-primary/30 rounded-t-lg" style="height: 75%;"></div>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-2/3 bg-primary/30 rounded-t-lg" style="height: 55%;"></div>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-2/3 bg-primary/30 rounded-t-lg" style="height: 85%;"></div>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-2/3 bg-primary rounded-t-lg" style="height: 95%;"></div>
+</div>
+</div>
+<svg class="absolute inset-0 w-full h-full" fill="none" height="256" viewBox="0 0 310 256" width="310" xmlns="http://www.w3.org/2000/svg">
+<path d="M25 114.5C40.6667 101.333 66.8 71.3 88 84C114 99.5 119.5 125 146.5 114.5C173.5 104 175 42.5 204.5 25C234 7.5 240.167 19.8333 246.5 25C266.5 40 263.5 43.5 285.5 16.5" stroke="#ee7c2b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2 px-2">
+<span>Jan</span>
+<span>Feb</span>
+<span>Mar</span>
+<span>Apr</span>
+<span>May</span>
+<span>Jun</span>
+</div>
+</div>
+<div class="space-y-2">
+<h2 class="text-lg font-bold mb-2 text-gray-900 dark:text-white px-1">Settings</h2>
+<button class="w-full flex items-center gap-4 p-3 rounded-lg bg-white dark:bg-black/20 text-left">
+<img alt="Dr. Emily Carter" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPxafxfFvo4H099iX9ZzZMyDuUleJM-x8jjwV0HsZ7sVo8YQQEr0EphsTroz-Z593amHZ2cpRnRNyhMjksEJ_y8lO14HdDMsaEaO5XOFgew2peOZ4SAsNEL9lHftL4ux4eJOiUqMiCB-k3Th0vwAewbgu_gOIajK2WRDgozo2NgbtT4Wp19lUWt0tt9-xHvbxR25gF5FpMpiUetNLRKAWj5rgkVq8AGKAOoVpU95qvAjtMyBaJprIfhvUlhnwjSpWbuF-qpyOVYUA"/>
+<div class="flex-1">
+<p class="font-bold text-gray-900 dark:text-white">Profile Management</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">Manage your profile details</p>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-600">chevron_right</span>
+</button>
+<button class="w-full flex items-center gap-4 p-3 rounded-lg bg-white dark:bg-black/20 text-left">
+<div class="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20">
+<span class="material-symbols-outlined text-primary">notifications</span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-gray-900 dark:text-white">Notification Preferences</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">Set your notification settings</p>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-600">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<footer class="fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-sm">
+<nav class="flex justify-around items-center h-20 px-2">
+<a class="flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-xs">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="text-xs">Records</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-xs">Appointments</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-xs">Users</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-primary" href="#">
+<div class="bg-primary/10 dark:bg-primary/20 p-3 rounded-full">
+<span class="material-symbols-outlined">settings</span>
+</div>
+<span class="text-xs font-bold">Settings</span>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>

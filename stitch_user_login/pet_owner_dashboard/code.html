@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pet Care Dashboard</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Epilogue%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ee7c2b",
+            "background-light": "#f8f7f6",
+            "background-dark": "#221810",
+          },
+          fontFamily: {
+            "display": ["Epilogue"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="min-h-screen flex flex-col">
+<main class="flex-grow p-6 space-y-6">
+<header class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary text-3xl">pets</span>
+<h1 class="text-3xl font-bold text-background-dark dark:text-background-light">Pawsera</h1>
+</div>
+<p class="text-base text-background-dark/60 dark:text-background-light/60">Hello, Jane!</p>
+</div>
+<button class="relative p-2 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20 text-background-dark dark:text-background-light">
+<span class="material-symbols-outlined text-3xl">notifications</span>
+<span class="absolute top-1 right-1 block h-3 w-3 rounded-full bg-primary border-2 border-background-light dark:border-background-dark"></span>
+</button>
+</header>
+<section class="grid grid-cols-2 gap-4">
+<div class="bg-primary/10 dark:bg-primary/20 rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<p class="text-4xl font-bold text-primary">3</p>
+<p class="text-xs text-background-dark/60 dark:text-background-light/60 mt-1">Total Pets</p>
+</div>
+<div class="bg-primary/10 dark:bg-primary/20 rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<p class="text-4xl font-bold text-primary">1</p>
+<p class="text-xs text-background-dark/60 dark:text-background-light/60 mt-1">Upcoming</p>
+</div>
+</section>
+<section>
+<h2 class="text-xl font-bold text-background-dark dark:text-background-light mb-4">Notifications</h2>
+<div class="space-y-3">
+<div class="bg-primary/10 dark:bg-primary/20 rounded-xl p-4 flex items-center gap-4">
+<div class="bg-primary text-white rounded-full p-2">
+<span class="material-symbols-outlined">calendar_month</span>
+</div>
+<div>
+<p class="font-semibold text-background-dark dark:text-background-light">Upcoming Appointment</p>
+<p class="text-sm text-background-dark/80 dark:text-background-light/80">Buddy's checkup is tomorrow at 10 AM.</p>
+</div>
+</div>
+<div class="bg-primary/10 dark:bg-primary/20 rounded-xl p-4 flex items-center gap-4">
+<div class="bg-primary text-white rounded-full p-2">
+<span class="material-symbols-outlined">pill</span>
+</div>
+<div>
+<p class="font-semibold text-background-dark dark:text-background-light">Medication Reminder</p>
+<p class="text-sm text-background-dark/80 dark:text-background-light/80">Give Whiskers his pill at 8 PM.</p>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-xl font-bold text-background-dark dark:text-background-light mb-4">Weather-based Reminders</h2>
+<div class="bg-blue-100 dark:bg-blue-900/50 rounded-xl p-4 flex items-center gap-4">
+<span class="material-symbols-outlined text-blue-500 dark:text-blue-400 text-4xl">wb_sunny</span>
+<div>
+<p class="font-bold text-background-dark dark:text-background-light">Sunny Day: 28°C</p>
+<p class="text-sm text-background-dark/80 dark:text-background-light/80">Perfect for a walk! Don't forget water for your furry friend.</p>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-xl font-bold text-background-dark dark:text-background-light mb-4">Pet Milestones</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white dark:bg-background-dark/50 rounded-xl p-4 flex flex-col items-center justify-center text-center shadow">
+<div class="relative">
+<img alt="Buddy" class="w-16 h-16 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfxXDsZiTMnk_mIVE36msW_tTk1cx4zgP0kyyypmL1QOYQ0_ygWcz-sbwgXxi909UFrRS4CsTDha0zlK97bbFwIqz2iUK9BAtU2quAvwc6WpXOgzsB8QlOvQmcvW8DQqaS5cCen4zkCI-JbGuVguMhB8kE3qgan4xKUzDInY6cahA_e2xc6W2VacJnMPAplyzLZ-bjOXDszhv_g5VTrJkKuzCRmw7RVgGbOm4teKday5byqHp2WKZQPne85JRFYX5u8yxhg20rhas"/>
+<span class="absolute -bottom-2 -right-2 bg-primary text-white rounded-full p-1"><span class="material-symbols-outlined text-sm">cake</span></span>
+</div>
+<p class="font-bold text-background-dark dark:text-background-light mt-3">Buddy's 3rd Birthday!</p>
+<p class="text-sm text-background-dark/60 dark:text-background-light/60">Celebrated today</p>
+</div>
+<div class="bg-white dark:bg-background-dark/50 rounded-xl p-4 flex flex-col items-center justify-center text-center shadow">
+<div class="relative">
+<img alt="Charlie" class="w-16 h-16 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsDpKcbiGa15REktfHdP4mB3Zvr2a0OQ6OSiXPv7V0Y_Ds1jmF2io8A1xuFIPbd6xeDlSHUkg7twKofKVc4NFnZz2WPAEgO9Whj6ghc2PRPwogwSLLtCYyk5-APJiXhkPM7tXf9d7ovLp-pYmkyHM3vvEZ5s_EqPSGDEA1xlB5JZHQzz9qky4lRywgAcH2d7cfoZ3wZ85bwEIDzpK4QxDujzOB8IG5iucqmdV6xB18yWx-P5jIEwpph3Y0gb9abe-oaM2Nm3Xq7UQ"/>
+<span class="absolute -bottom-2 -right-2 bg-primary text-white rounded-full p-1"><span class="material-symbols-outlined text-sm">monitor_weight</span></span>
+</div>
+<p class="font-bold text-background-dark dark:text-background-light mt-3">Charlie's Weight</p>
+<p class="text-sm text-background-dark/60 dark:text-background-light/60">Reached 5kg goal!</p>
+</div>
+</div>
+</section>
+</main>
+<footer class="sticky bottom-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-t border-background-dark/10 dark:border-background-light/10">
+<nav class="flex justify-around items-center h-20">
+<a class="text-center text-primary flex flex-col items-center" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-xs font-bold">Home</span>
+</a>
+<a class="text-center text-background-dark/60 dark:text-background-light/60 hover:text-primary flex flex-col items-center" href="#">
+<span class="material-symbols-outlined">pets</span>
+<span class="text-xs font-medium">My Pets</span>
+</a>
+<a class="text-center text-background-dark/60 dark:text-background-light/60 hover:text-primary flex flex-col items-center" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-xs font-medium">Schedule</span>
+</a>
+<a class="text-center text-background-dark/60 dark:text-background-light/60 hover:text-primary flex flex-col items-center" href="#">
+<span class="material-symbols-outlined">health_and_safety</span>
+<span class="text-xs font-medium">Vets</span>
+</a>
+<a class="text-center text-background-dark/60 dark:text-background-light/60 hover:text-primary flex flex-col items-center" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-xs font-medium">Profile</span>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>

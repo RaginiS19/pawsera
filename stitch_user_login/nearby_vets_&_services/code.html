@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="preload"/>
+<title>Pawsera - Nearby Vets</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ee822b",
+              "background-light": "#f8f7f6",
+              "background-dark": "#221810",
+            },
+            fontFamily: {
+              "display": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex-grow">
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<button class="text-background-dark dark:text-background-light size-10 flex items-center justify-center rounded-full hover:bg-primary/10">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
+<svg aria-label="Pawsera Logo" class="text-primary" height="24" role="img" viewBox="0 0 256 256" width="24"><path d="M212,80a28,28,0,1,0,28,28A28,28,0,0,0,212,80Zm0,40a12,12,0,1,1,12-12A12,12,0,0,1,212,120ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM44,120a12,12,0,1,1,12-12A12,12,0,0,1,44,120ZM92,88A28,28,0,1,0,64,60,28,28,0,0,0,92,88Zm0-40A12,12,0,1,1,80,60,12,12,0,0,1,92,48Zm72,40a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm0-40a12,12,0,1,1-12,12A12,12,0,0,1,164,48Zm23.12,100.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0,35.25,35.25,0,0,1-16.9,21.18A40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0A40,40,0,0,0,187.12,148.86ZM168,208a24,24,0,0,1-9.45-1.93,80.14,80.14,0,0,0-61.19,0,24,24,0,0,1-20.71-43.26,51.22,51.22,0,0,0,24.46-30.67,28,28,0,0,1,53.78,0,51.27,51.27,0,0,0,24.53,30.71A24,24,0,0,1,168,208Z" fill="currentColor"></path></svg>
+<h1 class="text-background-dark dark:text-background-light text-lg font-bold">Pawsera</h1>
+</div>
+</header>
+<main class="flex flex-col h-full flex-1">
+<div class="bg-cover bg-center flex min-h-[calc(100vh-160px)] flex-1 flex-col justify-between p-4" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuABj2dv67a-RB0Z8H1TWDwhiZxEi2rcz1hxwnLkRBCXpJIlBNEygmqGftaTqHiusP31DF804mW4Np5HTnHxZkB7SuoDTu0AX4sZlHuJdto-ZXCv230-ocdCyyyWwQdlJ35n0DVG2cPvsRNuysLlujNBfZHqcd58QkiaTH6vqRr4IwBv96QExfdO7qSjIy2SngBuLuVUmJPm61NSsJbuSsLlvOMB3idEDbin7bJeb1O6FepbhDIrkOS2mqAHexl0q9Ft9LrjMEnr0-g");'>
+<label class="flex w-full h-12 rounded-lg shadow-md">
+<div class="text-background-dark/60 dark:text-background-light/60 flex bg-background-light dark:bg-background-dark items-center justify-center pl-4 rounded-l-lg">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-background-dark dark:text-background-light focus:outline-0 focus:ring-0 border-none bg-background-light dark:bg-background-dark focus:border-none h-full placeholder:text-background-dark/60 dark:placeholder:text-background-light/60 px-4 text-base font-normal" placeholder="Search for vets or pet services" value=""/>
+</label>
+<div class="flex flex-col items-end gap-3">
+<div class="flex flex-col gap-px rounded-lg overflow-hidden shadow-md">
+<button class="flex size-10 items-center justify-center bg-background-light dark:bg-background-dark text-background-dark dark:text-background-light hover:bg-primary/10">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="flex size-10 items-center justify-center bg-background-light dark:bg-background-dark text-background-dark dark:text-background-light hover:bg-primary/10">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+<button class="flex size-10 items-center justify-center rounded-lg bg-primary text-white shadow-md">
+<span class="material-symbols-outlined">near_me</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+<nav class="sticky bottom-0 bg-background-light dark:bg-background-dark border-t border-primary/20 dark:border-primary/30 z-10">
+<div class="flex justify-around px-4 pt-2 pb-5">
+<a class="flex flex-col items-center justify-end gap-1 text-background-dark/60 dark:text-background-light/60 w-1/5" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-xs font-medium">Dashboard</p>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 text-background-dark/60 dark:text-background-light/60 w-1/5" href="#">
+<span class="material-symbols-outlined">pets</span>
+<p class="text-xs font-medium">My Pets</p>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 text-background-dark/60 dark:text-background-light/60 w-1/5" href="#">
+<span class="material-symbols-outlined">event</span>
+<p class="text-xs font-medium text-center">Appointments</p>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 text-primary w-1/5" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<p class="text-xs font-bold">Nearby Vets</p>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 text-background-dark/60 dark:text-background-light/60 w-1/5" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-xs font-medium">Settings</p>
+</a>
+</div>
+</nav>
+</div>
+
+</body></html>

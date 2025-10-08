@@ -1,0 +1,163 @@
+/* Pawsera - Consolidated CSS Styles */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+
+/* Material Symbols Configuration */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Base Styles */
+body {
+    min-height: max(884px, 100dvh);
+    font-family: 'Manrope', sans-serif;
+}
+
+/* Custom Color Variables */
+:root {
+    --primary: #ee822b;
+    --background-light: #f8f7f6;
+    --background-dark: #221810;
+    --content-light: #f8f7f6;
+    --content-dark: #221810;
+    --subtle-light: #f8f7f6;
+    --subtle-dark: #221810;
+    --surface-light: #f8f7f6;
+    --surface-dark: #221810;
+    --card-light: #f8f7f6;
+    --card-dark: #221810;
+    --accent: #ee822b;
+}
+
+/* Tailwind Configuration */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Form Styles */
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Custom Checkbox Styles */
+.custom-checkbox {
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #d1d5db;
+    border-radius: 0.25rem;
+    background-color: white;
+    position: relative;
+    cursor: pointer;
+}
+
+.custom-checkbox:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.custom-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Chart Styles */
+.chart-container {
+    position: relative;
+    height: 200px;
+    width: 100%;
+}
+
+.chart-line {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 2;
+}
+
+.chart-fill {
+    fill: url(#gradient);
+}
+
+.chart-gradient {
+    stop-color: var(--primary);
+    stop-opacity: 0.3;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .mobile-hidden {
+        display: none;
+    }
+    
+    .mobile-full {
+        width: 100%;
+    }
+}
+
+/* Dark Mode Support */
+.dark {
+    color-scheme: dark;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* Utility Classes */
+.text-primary { color: var(--primary); }
+.bg-primary { background-color: var(--primary); }
+.border-primary { border-color: var(--primary); }
+
+.text-content-light { color: var(--content-light); }
+.text-content-dark { color: var(--content-dark); }
+.bg-content-light { background-color: var(--content-light); }
+.bg-content-dark { background-color: var(--content-dark); }
+
+.text-subtle-light { color: var(--subtle-light); }
+.text-subtle-dark { color: var(--subtle-dark); }
+.bg-subtle-light { background-color: var(--subtle-light); }
+.bg-subtle-dark { background-color: var(--subtle-dark); }
+
+.text-surface-light { color: var(--surface-light); }
+.text-surface-dark { color: var(--surface-dark); }
+.bg-surface-light { background-color: var(--surface-light); }
+.bg-surface-dark { background-color: var(--surface-dark); }
+
+.text-card-light { color: var(--card-light); }
+.text-card-dark { color: var(--card-dark); }
+.bg-card-light { background-color: var(--card-light); }
+.bg-card-dark { background-color: var(--card-dark); }

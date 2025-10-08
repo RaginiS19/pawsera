@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pawsera Dashboard</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+    </style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-zinc-900 dark:text-zinc-100">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-10">
+<div class="container mx-auto px-4 py-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<svg class="text-primary" height="28" viewBox="0 0 256 256" width="28" xmlns="http://www.w3.org/2000/svg">
+<path d="M212 80a28 28 0 1 0 28 28a28 28 0 0 0-28-28Zm0 40a12 12 0 1 1 12-12a12 12 0 0 1-12 12ZM72 108a28 28 0 1 0-28 28a28 28 0 0 0 28-28Zm-28 12a12 12 0 1 1 12-12a12 12 0 0 1-12 12Zm48-60a28 28 0 1 0-28-28a28 28 0 0 0 28 28Zm0-40a12 12 0 1 1-12 12a12 12 0 0 1 12-12Zm72 40a28 28 0 1 0-28-28a28 28 0 0 0 28 28Zm0-40a12 12 0 1 1-12 12a12 12 0 0 1 12-12Zm23.12 100.86a35.3 35.3 0 0 1-16.87-21.14a44 44 0 0 0-84.5 0a35.25 35.25 0 0 1-16.88 21.18A40 40 0 0 0 88 224a39.48 39.48 0 0 0 15.52-3.13a64.09 64.09 0 0 1 48.87 0A40 40 0 0 0 187.12 148.86ZM168 208a24 24 0 0 1-9.45-1.93a80.14 80.14 0 0 0-61.19 0a24 24 0 0 1-20.71-43.26a51.22 51.22 0 0 0 24.46-30.67a28 28 0 0 1 53.78 0a51.27 51.27 0 0 0 24.53 30.71A24 24 0 0 1 168 208Z" fill="currentColor"></path>
+</svg>
+<h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">Pawsera</h1>
+</div>
+</div>
+</div>
+<div class="px-4 py-2">
+<div class="flex h-12 flex-1 items-center justify-center rounded-lg bg-zinc-200 dark:bg-zinc-800 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-2 text-sm font-medium transition-all has-[:checked]:bg-primary has-[:checked]:text-white has-[:checked]:shadow-md text-zinc-600 dark:text-zinc-400">
+<span class="truncate">Vet View</span>
+<input checked="" class="invisible w-0" name="view-toggle" type="radio" value="Vet View"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-2 text-sm font-medium transition-all has-[:checked]:bg-primary has-[:checked]:text-white has-[:checked]:shadow-md text-zinc-600 dark:text-zinc-400">
+<span class="truncate">Admin View</span>
+<input class="invisible w-0" name="view-toggle" type="radio" value="Admin View"/>
+</label>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 py-6 space-y-8">
+<section>
+<h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Upcoming Appointments</h2>
+<div class="space-y-3">
+<a class="flex items-center gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-all" href="#">
+<img alt="Pet Max" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkWpuCfMkOBhE9hBeF8DSuWHta3CMNECq7tUXk0xuAN7BUfds4WW17j3F1gQ0QvIn3YLDMDni6JV1vDvA6CNEDGPRirCG2aFfVJR14dpoQWrgP4qReCz5-U7Wk9qndyn96Mr34Fv_61cco_WQQdsl4pgJv_uWv6nHrYJwuEegy_4m9I_US_B9utYzYnBilkZvIYk0ywHh5WuO2nc26w0NEeBGNBQA9V3PGeAI6Nf8v7jEaz3fsHphvYwDJQx453JClEz-gXIpNFXs"/>
+<div class="flex-grow">
+<p class="font-semibold text-zinc-900 dark:text-zinc-100">10:00 AM - Checkup for Max</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">Dr. Emily Carter</p>
+</div>
+<span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-all" href="#">
+<img alt="Pet Bella" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjSjg2QsnI78uwV2LnM2QTFxfV0tjd3NEy4tv8TWI2mlizGOuI_Bc7g6uBs8Ycx1pM4ssqXHunVg9k767A_eJ_FOtl__JL6aw5KIzK3KKmn19kD5uX43SueToVXrNummuD4i-EVLr-g9pMNb1NT8xDUVyPTxEa9TFRZttAYdFkd6XbEZ8WVG7-kXC_woVtRFctRFQzD48bmdoXMRmuuyHMSFrBODJf4DQgn4xG1o9rLcLMkKgSruFWRRKvrfNlCVdgiOT75xMFrr4"/>
+<div class="flex-grow">
+<p class="font-semibold text-zinc-900 dark:text-zinc-100">11:30 AM - Vaccination for Bella</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">Dr. Emily Carter</p>
+</div>
+<span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-all" href="#">
+<img alt="Pet Charlie" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIwwAWzm9UK4K1elrAwwpPRZJyQ8_xlEoJ5Gn4j9B8u1o3_GlM3SKQm7M0y3NqbKxfB1Q1Rc4Ax89qs9iHNRjnJUJzgemL3W9fy57VL1hQqbFSYm9aPCZ9hn7Ft5xGcQSX79Sp24dGJz3SpXWPsh4GVRIi7m0qiAN_gvycCzJ5QvS9g830AjsMkEwYReZwbXXjrfE26vM05eH2uPs7oBpk9fSgVzQqIvM5TVJLgzuzyx0hnNOcE0ofDRunk3MwLeRe0RmOD4YlIxQ"/>
+<div class="flex-grow">
+<p class="font-semibold text-zinc-900 dark:text-zinc-100">2:00 PM - Surgery for Charlie</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">Dr. Emily Carter</p>
+</div>
+<span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500">chevron_right</span>
+</a>
+</div>
+</section>
+<section>
+<h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Patient Records</h2>
+<div class="space-y-3">
+<a class="flex items-center gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-all" href="#">
+<img alt="Pet Max" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz2q6hDdlpIAuVr3DwJtptojvHBfs3T62fSvXLI-45gaMWOG1XsuvSjFSIn-I4PjVxuokbMf8QuCK0HGPh44BAXvgaefxE45v9EdXqrRazW4D07eQtGjf68dWzI1nSX0SH7Ls2ET9k8wjp28jqp57NvfGVo1lQjAGJ78qb5hRN4ZUtTqKaFEUN0xJWDgO0gPSZv21H7PvwtqLfl76c0WtnusbZydBcuUI-MhokUKqGw6qZZgyK0vei_nRmDzpj5BKPPW_YaddGLrs"/>
+<div class="flex-grow">
+<p class="font-semibold text-zinc-900 dark:text-zinc-100">Max - Golden Retriever</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">Owner: Sarah Johnson</p>
+</div>
+<span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-all" href="#">
+<img alt="Pet Bella" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ6mjPS1eQslsaHhz9-9NRYNK7vchJUnGbEKoBqGYKD79I1pHC-E9vvG2QjqEYAqp1uyoJUruNmLlSRSLkX9mpJsZULjXSMCh_x8UiN29BR4xdcb2dYJ33jUk41ZuO9TI88WeRZncOzT9jE16xHicRCIdMoPQsVy86rBdtlTtx_VNuGjXhcsZ0p9OCJH2gbN9V_3yfXML_CDHfHc-BzFG5cAIAd96HmLeT2ocP1d-I1WGUUFMoWNj-PScrIiHfl1vGgKy9R6x5o6E"/>
+<div class="flex-grow">
+<p class="font-semibold text-zinc-900 dark:text-zinc-100">Bella - Siamese Cat</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">Owner: Michael Brown</p>
+</div>
+<span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500">chevron_right</span>
+</a>
+<a class="flex items-center gap-4 p-4 rounded-lg bg-background-light dark:bg-zinc-800/50 shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-all" href="#">
+<img alt="Pet Charlie" class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx-9-AeUeQAciTYcxqQVPXkZJ3JpI9H07jIUsILzaUr5u3PXlTCmnrms4xyCSQCc1wKzOv36W7WELb0ue_OtP89FGMjQ3kt6zSbEu1uolLlSrbkLvicU2lLq38rnM_6ZRQiXa8A-lrBwyJusgQdP8nrQpYRaP4ongvdJL5IMwZZe6hdVK0GOnj2DclqYJ6NIN6TfUwfllPVhfnT_ekhA9Y_v53HbypSrxvPSlnQWq1ZkZNx5DH2m1CmQ5yEwe35GwZ0N1iLcRof3I"/>
+<div class="flex-grow">
+<p class="font-semibold text-zinc-900 dark:text-zinc-100">Charlie - Bulldog</p>
+<p class="text-sm text-zinc-500 dark:text-zinc-400">Owner: David Lee</p>
+</div>
+<span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500">chevron_right</span>
+</a>
+</div>
+</section>
+</main>
+<footer class="sticky bottom-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-t border-zinc-200 dark:border-zinc-800">
+<nav class="container mx-auto px-4 py-2 flex justify-around">
+<a class="flex flex-col items-center justify-center gap-1 text-primary w-1/5" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+<p class="text-xs font-medium">Dashboard</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors w-1/5" href="#">
+<span class="material-symbols-outlined">pets</span>
+<p class="text-xs font-medium">Pet Records</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors w-1/5" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<p class="text-xs font-medium">Appointments</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors w-1/5" href="#">
+<span class="material-symbols-outlined">group</span>
+<p class="text-xs font-medium">Users</p>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors w-1/5" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-xs font-medium">Settings</p>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>

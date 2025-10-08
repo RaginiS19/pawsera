@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pawsera - Add New Pet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810",
+                        "content-light": "#221810",
+                        "content-dark": "#f8f7f6",
+                        "subtle-light": "#a8998c",
+                        "subtle-dark": "#6b5f54",
+                        "surface-light": "#ede8e4",
+                        "surface-dark": "#3a2e24",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a8998c' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        .dark .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b5f54' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-content-light dark:text-content-dark">
+<div class="flex flex-col h-screen justify-between">
+<main class="flex-grow overflow-y-auto">
+<header class="sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-10">
+<div class="flex items-center justify-between p-4 border-b border-surface-light dark:border-surface-dark">
+<button class="text-content-light dark:text-content-dark">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path></svg>
+</button>
+<h1 class="text-lg font-bold text-center">Add New Pet</h1>
+<div class="w-6"></div> 
+</div>
+</header>
+<div class="p-4 space-y-6">
+<div class="flex flex-col items-center justify-center bg-surface-light dark:bg-surface-dark rounded-lg p-6 border-2 border-dashed border-subtle-light dark:border-subtle-dark cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+<div class="w-16 h-16 bg-background-light dark:bg-background-dark rounded-full flex items-center justify-center mb-2">
+<svg class="text-subtle-light dark:text-subtle-dark w-8 h-8" fill="currentColor" height="32" viewBox="0 0 256 256" width="32" xmlns="http://www.w3.org/2000/svg"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"></path></svg>
+</div>
+<p class="font-semibold">Upload Pet Photo</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">Tap to select an image</p>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium mb-1 text-subtle-light dark:text-subtle-dark" for="pet-name">Pet's Name</label>
+<input class="form-input w-full bg-surface-light dark:bg-surface-dark border-none rounded-lg h-12 px-4 placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary" id="pet-name" placeholder="e.g. Buddy" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1 text-subtle-light dark:text-subtle-dark" for="breed">Breed</label>
+<input class="form-input w-full bg-surface-light dark:bg-surface-dark border-none rounded-lg h-12 px-4 placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary" id="breed" placeholder="e.g. Golden Retriever" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1 text-subtle-light dark:text-subtle-dark" for="age">Age</label>
+<input class="form-input w-full bg-surface-light dark:bg-surface-dark border-none rounded-lg h-12 px-4 placeholder:text-subtle-light dark:placeholder:text-subtle-dark focus:ring-2 focus:ring-primary" id="age" placeholder="e.g. 2 years" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1 text-subtle-light dark:text-subtle-dark" for="pet-type">Type of Pet</label>
+<select class="form-select w-full bg-surface-light dark:bg-surface-dark border-none rounded-lg h-12 px-4 text-content-light dark:text-content-dark focus:ring-2 focus:ring-primary" id="pet-type">
+<option>Select pet type</option>
+<option>Dog</option>
+<option>Cat</option>
+<option>Bird</option>
+<option>Rabbit</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-4">
+<button class="w-full h-12 rounded-lg bg-surface-light dark:bg-surface-dark font-bold text-content-light dark:text-content-dark hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                        Cancel
+                    </button>
+<button class="w-full h-12 rounded-lg bg-primary font-bold text-white hover:opacity-90 transition-opacity">
+                        Save
+                    </button>
+</div>
+</div>
+</main>
+<footer class="bg-background-light dark:bg-background-dark border-t border-surface-light dark:border-surface-dark">
+<nav class="flex justify-around p-2">
+<a class="flex flex-col items-center justify-center w-1/5 text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z"></path></svg>
+<span class="text-xs font-medium">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center w-1/5 text-primary dark:text-primary transition-colors" href="#">
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M240,108a28,28,0,1,1-28-28A28,28,0,0,1,240,108ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM92,88A28,28,0,1,0,64,60,28,28,0,0,0,92,88Zm72,0a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm23.12,60.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0A35.25,35.25,0,0,1,69,148.82,40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0,40,40,0,0,0,34.73-72Z"></path></svg>
+<span class="text-xs font-bold">My Pets</span>
+</a>
+<a class="flex flex-col items-center justify-center w-1/5 text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"></path></svg>
+<span class="text-xs font-medium">Schedule</span>
+</a>
+<a class="flex flex-col items-center justify-center w-1/5 text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path></svg>
+<span class="text-xs font-medium">Vets</span>
+</a>
+<a class="flex flex-col items-center justify-center w-1/5 text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M216.49,100.25l-14.92-18.64a8,8,0,0,0-7.06-1.48,107.6,107.6,0,0,0-26.25,10.88,8,8,0,0,0-3.93,6l-2.64,23.72q-1.56,1.48-3,3L135.46,147a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L138.72,203q.06,2.16,0,4.32l-14.92,18.64a8,8,0,0,0,1.48,7.06,107.21,107.21,0,0,0,26.25,10.88,8,8,0,0,0,6-3.93l2.64-23.72q1.48-1.56,3-3l23.72-2.64a8,8,0,0,0,3.94-6A107.71,107.71,0,0,0,204,197.67a8,8,0,0,0-1.49-7.06L184,172q0-2.16,0-4.32l14.92-18.64a8,8,0,0,0-1.48-7.06,107.21,107.21,0,0,0-26.25-10.88,8,8,0,0,0-6,3.93L162.6,148.8q-1.49,1.56-3,3l-23.72,2.64a8,8,0,0,0-3.94,6,107.71,107.71,0,0,0,10.87,26.25,8,8,0,0,0,7.06,1.49L169.2,173.2q2.16-.06,4.32,0ZM128,176a48,48,0,1,0-48-48A48.05,48.05,0,0,0,128,176Zm0-80a32,32,0,1,1-32,32A32,32,0,0,1,128,96Z"></path></svg>
+<span class="text-xs font-medium">Settings</span>
+</a>
+</nav>
+</footer>
+</div>
+
+</body></html>

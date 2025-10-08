@@ -1,0 +1,43 @@
+PAWSERA PROJECT STRUCTURE
+========================
+
+Create this folder structure on your computer:
+
+📁 Pawsera-Project/
+├── 📄 styles.css
+├── 📄 README.md
+├── 📄 index.html (main entry point)
+├── 📁 pet-owner-pages/
+│   ├── 📄 add-new-pet.html
+│   ├── 📄 appointment-confirmation.html
+│   ├── 📄 appointment-error.html
+│   ├── 📄 appointments.html
+│   ├── 📄 new-appointment.html
+│   ├── 📄 nearby-vets.html
+│   ├── 📄 dashboard.html
+│   ├── 📄 pet-details.html
+│   ├── 📄 my-pets.html
+│   └── 📄 pet-medical-records.html
+├── 📁 vet-admin-pages/
+│   ├── 📄 user-management.html
+│   ├── 📄 vet-dashboard.html
+│   ├── 📄 admin-dashboard.html
+│   ├── 📄 settings-analytics.html
+│   ├── 📄 admin-analytics.html
+│   └── 📄 admin-vet-approval.html
+└── 📁 auth-pages/
+    ├── 📄 create-account.html
+    └── 📄 login.html
+
+INSTRUCTIONS:
+1. Create a folder called "Pawsera-Project" on your computer
+2. Create the subfolders: pet-owner-pages, vet-admin-pages, auth-pages
+3. Copy each HTML file into its appropriate folder
+4. Copy styles.css and README.md to the main folder
+5. Open login.html in your browser to start!
+
+MOBILE-FIRST DESIGN:
+- All pages are optimized for mobile devices
+- Bottom navigation bars on every screen
+- Touch-friendly interface
+- Responsive design that works on phones, tablets, and desktop

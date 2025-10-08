@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Pets</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee7c2b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#1a1816",
+                        "card-light": "#ffffff",
+                        "card-dark": "#242220",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+<button class="p-2 -ml-2">
+<span class="material-symbols-outlined text-gray-800 dark:text-gray-200">arrow_back_ios_new</span>
+</button>
+<h1 class="text-xl font-bold">My Pets</h1>
+<div class="w-8"></div>
+</div>
+</header>
+<main class="flex-grow p-4 space-y-6">
+<div class="bg-card-light dark:bg-card-dark rounded-xl p-4 flex items-center space-x-4 shadow-sm hover:shadow-lg transition-shadow duration-300">
+<div class="relative">
+<img alt="Buddy the Golden Retriever" class="w-20 h-20 rounded-full object-cover border-2 border-primary/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACIqpArYutN_80TrCUVQNiXcKSjOX1_gG68w4JRw12JJ3ZaNxIz5siSZtwg5hi4EYPBdLJbtZ3sH8Oq0WHUgQAC-gwVLW5VNc4nx80vNP_gL9L18x9L8k4EOW31l3F3c20iSO35VogE7C38--ImEjng6qyqEkfB71Ac6IRb5rAbkITLSe_md-2ZPm6l7I9IlTGjHTB42dTKOwHS_Soad7dxg3aDYh4HxkBURTY9aLstGHxEH1kxXGaqadY5IZ8n91de6ulfVzUrvY"/>
+<button class="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 shadow-md">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-lg text-gray-900 dark:text-white">Buddy</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">Golden Retriever</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">3 years old</p>
+<div class="flex space-x-3 mt-2">
+<a class="text-xs text-primary dark:text-primary font-semibold flex items-center gap-1" href="#"><span class="material-symbols-outlined text-base">vaccines</span>Records</a>
+<a class="text-xs text-primary dark:text-primary font-semibold flex items-center gap-1" href="#"><span class="material-symbols-outlined text-base">medical_services</span>History</a>
+</div>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-xl p-4 flex items-center space-x-4 shadow-sm hover:shadow-lg transition-shadow duration-300">
+<div class="relative">
+<img alt="Whiskers the Siamese Cat" class="w-20 h-20 rounded-full object-cover border-2 border-primary/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFXSh2fdrUm8OqdvRJyk1FIRxgmXSiXHrr8IAiX3pNoGODGHiHpThQI5QMW8FCpGn1GC5SKkJxnIZltW1a1uTKPXNXIXv1iAcgZ-kBpepOnMLAUH5gJ4EdJesRHN5AJnnkb0VA4h9TNPbgV2z7bpgN8QiCYDeVnqsmnHAXFX5SlxFTjobRMiQ0pSlVPIfhDNtCbFybsneHJDREukaRXlUFJRl-nQDbuMivpqfNRL8k-POn_C0DG1feMvORj8gR4IWUzsgYgoX_7L4"/>
+<button class="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 shadow-md">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-lg text-gray-900 dark:text-white">Whiskers</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">Siamese</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">5 years old</p>
+<div class="flex space-x-3 mt-2">
+<a class="text-xs text-primary dark:text-primary font-semibold flex items-center gap-1" href="#"><span class="material-symbols-outlined text-base">vaccines</span>Records</a>
+<a class="text-xs text-primary dark:text-primary font-semibold flex items-center gap-1" href="#"><span class="material-symbols-outlined text-base">medical_services</span>History</a>
+</div>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-xl p-4 flex items-center space-x-4 shadow-sm hover:shadow-lg transition-shadow duration-300">
+<div class="relative">
+<img alt="Max the German Shepherd" class="w-20 h-20 rounded-full object-cover border-2 border-primary/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0lpREP0E8mX17LmxSaTZ0AqFgCMsKoEAIvWkFamw6Wz7q9koXFgO0sFA9OBiUo-fkeeuSFOHjAa0T9tfsRuUfCqix3Ht31GSbIYFeHoNZXYt6-7x7NdZMTbiOnKljjcZHMPwMcpPaOHda6ABXmVKr9LgWaycXYgH_upEBf9S8mz9k4YtSzbo6EmW0VV6110xITCEDqVln7fE7Kq1ppx6G_TK7KUSFgzBXgn7tcujr0TO4BV9doqLzgR4grg9PsGL-pZljog9jgIo"/>
+<button class="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 shadow-md">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-lg text-gray-900 dark:text-white">Max</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">German Shepherd</p>
+<p class="text-sm text-gray-600 dark:text-gray-400">2 years old</p>
+<div class="flex space-x-3 mt-2">
+<a class="text-xs text-primary dark:text-primary font-semibold flex items-center gap-1" href="#"><span class="material-symbols-outlined text-base">vaccines</span>Records</a>
+<a class="text-xs text-primary dark:text-primary font-semibold flex items-center gap-1" href="#"><span class="material-symbols-outlined text-base">medical_services</span>History</a>
+</div>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
+</div>
+</main>
+<footer class="p-4 sticky bottom-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<button class="w-full flex items-center justify-center gap-2 h-14 px-6 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors duration-300">
+<span class="material-symbols-outlined">add_circle</span>
+<span>Add a New Pet</span>
+</button>
+</footer>
+</div>
+
+</body></html>

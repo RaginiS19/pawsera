@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pawsera - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<main class="flex-grow flex flex-col items-center justify-center p-4">
+<div class="w-full max-w-sm">
+<div class="flex flex-col items-center mb-8">
+<div class="flex items-center space-x-2">
+<svg class="w-10 h-10 text-primary" fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M212,80a28,28,0,1,0,28,28A28,28,0,0,0,212,80Zm0,40a12,12,0,1,1,12-12A12,12,0,0,1,212,120ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM44,120a12,12,0,1,1,12-12A12,12,0,0,1,44,120ZM92,88A28,28,0,1,0,64,60,28,28,0,0,0,92,88Zm0-40A12,12,0,1,1,80,60,12,12,0,0,1,92,48Zm72,40a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm0-40a12,12,0,1,1-12,12A12,12,0,0,1,164,48Zm23.12,100.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0A35.25,35.25,0,0,1,69,148.82,40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0,40,40,0,0,0,34.73-72ZM168,208a24,24,0,0,1-9.45-1.93,80.14,80.14,0,0,0-61.19,0,24,24,0,0,1-20.71-43.26,51.22,51.22,0,0,0,24.46-30.67,28,28,0,0,1,53.78,0,51.27,51.27,0,0,0,24.53,30.71A24,24,0,0,1,168,208Z"></path>
+</svg>
+<span class="text-4xl font-extrabold text-gray-900 dark:text-white">Pawsera</span>
+</div>
+</div>
+<div class="bg-background-light dark:bg-background-dark/50 p-6 rounded-xl shadow-md">
+<h1 class="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">Welcome Back</h1>
+<form class="space-y-4">
+<div>
+<label class="sr-only" for="email">Email</label>
+<input class="w-full px-4 py-3 rounded-lg bg-background-light/50 dark:bg-background-dark/80 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" id="email" name="email" placeholder="Email" type="email"/>
+</div>
+<div>
+<label class="sr-only" for="password">Password</label>
+<input class="w-full px-4 py-3 rounded-lg bg-background-light/50 dark:bg-background-dark/80 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" id="password" name="password" placeholder="Password" type="password"/>
+</div>
+<div class="text-right">
+<a class="text-sm font-medium text-primary hover:underline" href="#">Forgot Password?</a>
+</div>
+<button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-300" type="submit">
+                            Login
+                        </button>
+</form>
+</div>
+</div>
+</main>
+<footer class="py-4">
+<p class="text-center text-sm">
+<span class="text-gray-600 dark:text-gray-400">Don't have an account?</span>
+<a class="font-medium text-primary hover:underline" href="#"> Register Now</a>
+</p>
+</footer>
+</div>
+
+</body></html>

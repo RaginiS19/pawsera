@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Pawsera - Nearby Vets</title>
+    <link href="styles.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <div class="flex flex-col h-screen">
+        <header class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <div class="flex items-center gap-2">
+                <svg class="text-primary" fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M212,80a28,28,0,1,0,28,28A28,28,0,0,0,212,80Zm0,40a12,12,0,1,1,12-12A12,12,0,0,1,212,120ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM44,120a12,12,0,1,1,12-12A12,12,0,0,1,44,120ZM92,88A28,28,0,1,0-28,28A28,28,0,0,0,92,88Zm0-40A12,12,0,1,1-12,12A12,12,0,0,1,92,48Zm72,40a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm0-40a12,12,0,1,1-12,12A12,12,0,0,1,164,48Zm23.12,100.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0A35.25,35.25,0,0,1,69,148.82,40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0,40,40,0,0,0,34.73-72ZM168,208a24,24,0,0,1-9.45-1.93,80.14,80.14,0,0,0-61.19,0,24,24,0,0,1-20.71-43.26,51.22,51.22,0,0,0,24.46-30.67,28,28,0,0,1,53.78,0,51.27,51.27,0,0,0,24.53,30.71A24,24,0,0,1,168,208Z"></path>
+                </svg>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Pawsera</h1>
+            </div>
+            <div class="w-10"></div>
+        </header>
+
+        <main class="flex-grow relative">
+            <!-- Search Bar -->
+            <div class="absolute top-4 left-4 right-4 z-10">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-gray-400">search</span>
+                        <input type="text" placeholder="Search veterinarians..." class="flex-grow bg-transparent text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Background -->
+            <div class="h-full bg-gray-200 dark:bg-gray-700 relative" style="background-image: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%23f3f4f6\"/><path d=\"M20,20 L80,20 L80,80 L20,80 Z\" fill=\"%23e5e7eb\" stroke=\"%23d1d5db\" stroke-width=\"0.5\"/><circle cx=\"30\" cy=\"30\" r=\"2\" fill=\"%23ee822b\"/><circle cx=\"70\" cy=\"40\" r=\"2\" fill=\"%23ee822b\"/><circle cx=\"50\" cy=\"60\" r=\"2\" fill=\"%23ee822b\"/></svg>'); background-size: 200px 200px;">
+                <!-- Map Controls -->
+                <div class="absolute bottom-4 right-4 flex flex-col gap-2">
+                    <button class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <span class="material-symbols-outlined text-gray-600 dark:text-gray-400">add</span>
+                    </button>
+                    <button class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <span class="material-symbols-outlined text-gray-600 dark:text-gray-400">remove</span>
+                    </button>
+                </div>
+
+                <!-- Near Me Button -->
+                <div class="absolute bottom-4 left-4">
+                    <button class="bg-primary text-white rounded-lg shadow-lg px-4 py-3 hover:bg-primary/90 transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined">my_location</span>
+                        <span class="font-medium">Near me</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="border-t border-gray-200 dark:border-gray-700">
+            <nav class="flex justify-around p-2">
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">home</span>
+                    <span class="text-xs">Dashboard</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">pets</span>
+                    <span class="text-xs">My Pets</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                    <span class="text-xs">Appointments</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-primary" href="#">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">local_hospital</span>
+                    <span class="text-xs font-bold">Nearby Vets</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="text-xs">Settings</span>
+                </a>
+            </nav>
+        </footer>
+    </div>
+</body>
+</html>

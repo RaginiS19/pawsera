@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Pawsera - Appointments</title>
+    <link href="styles.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee822b",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#221810"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <div class="flex flex-col h-screen">
+        <header class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <div class="flex items-center gap-2">
+                <svg class="text-primary" fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M212,80a28,28,0,1,0,28,28A28,28,0,0,0,212,80Zm0,40a12,12,0,1,1,12-12A12,12,0,0,1,212,120ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM44,120a12,12,0,1,1,12-12A12,12,0,0,1,44,120ZM92,88A28,28,0,1,0,64,60,28,28,0,0,0,92,88Zm0-40A12,12,0,1,1-12,12A12,12,0,0,1,92,48Zm72,40a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm0-40a12,12,0,1,1-12,12A12,12,0,0,1,164,48Zm23.12,100.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0A35.25,35.25,0,0,1,69,148.82,40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0,40,40,0,0,0,34.73-72ZM168,208a24,24,0,0,1-9.45-1.93,80.14,80.14,0,0,0-61.19,0,24,24,0,0,1-20.71-43.26,51.22,51.22,0,0,0,24.46-30.67,28,28,0,0,1,53.78,0,51.27,51.27,0,0,0,24.53,30.71A24,24,0,0,1,168,208Z"></path>
+                </svg>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Pawsera</h1>
+            </div>
+            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                <span class="material-symbols-outlined">add</span>
+            </button>
+        </header>
+
+        <main class="flex-grow p-4">
+            <!-- Tab Navigation -->
+            <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mb-6">
+                <button class="flex-1 bg-white dark:bg-gray-700 text-primary font-bold py-2 px-4 rounded-md shadow-sm">
+                    Calendar
+                </button>
+                <button class="flex-1 text-gray-500 dark:text-gray-400 font-medium py-2 px-4 rounded-md">
+                    List
+                </button>
+            </div>
+
+            <!-- Appointments List -->
+            <div class="space-y-3">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">pets</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-medium text-gray-900 dark:text-white">Buddy - Check-up</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Dr. Sarah Johnson</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">March 15, 2024 at 2:00 PM</p>
+                        </div>
+                        <span class="material-symbols-outlined text-green-500">check_circle</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">pets</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-medium text-gray-900 dark:text-white">Luna - Vaccination</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Dr. Mike Chen</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">March 20, 2024 at 10:00 AM</p>
+                        </div>
+                        <span class="material-symbols-outlined text-green-500">check_circle</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">pets</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-medium text-gray-900 dark:text-white">Max - Dental Cleaning</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Dr. Emily Davis</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">March 25, 2024 at 3:30 PM</p>
+                        </div>
+                        <span class="material-symbols-outlined text-green-500">check_circle</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="border-t border-gray-200 dark:border-gray-700">
+            <nav class="flex justify-around p-2">
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">home</span>
+                    <span class="text-xs">Dashboard</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">pets</span>
+                    <span class="text-xs">Pet Records</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-primary" href="#">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">calendar_today</span>
+                    <span class="text-xs font-bold">Appointments</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">people</span>
+                    <span class="text-xs">Users</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="text-xs">Settings</span>
+                </a>
+            </nav>
+        </footer>
+    </div>
+</body>
+</html>
