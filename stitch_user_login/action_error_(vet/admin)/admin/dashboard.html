@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Pawsera</title>
+    <link rel="stylesheet" href="../simple-styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <span style="font-size: 32px;">🐾</span>
+                <h1>Admin Dashboard</h1>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="card">
+            <div class="grid grid-2">
+                <button class="btn btn-secondary">Vet View</button>
+                <button class="btn">Admin View</button>
+            </div>
+        </div>
+
+        <!-- Pending Approvals -->
+        <div class="card">
+            <h3 class="card-title">Pending Approvals</h3>
+            <div class="list-item">
+                <div class="list-icon">👤</div>
+                <div class="list-content">
+                    <div class="list-title">Dr. Alex Chen</div>
+                    <div class="list-subtitle">DVM, Small Animal Specialist</div>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn" style="width: auto; padding: 5px 10px; margin: 0; background: #dc3545;">✗</button>
+                    <button class="btn" style="width: auto; padding: 5px 10px; margin: 0; background: #28a745;">✓</button>
+                </div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">👤</div>
+                <div class="list-content">
+                    <div class="list-title">Dr. Sofia Rodriguez</div>
+                    <div class="list-subtitle">VMD, Emergency & Critical Care</div>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn" style="width: auto; padding: 5px 10px; margin: 0; background: #dc3545;">✗</button>
+                    <button class="btn" style="width: auto; padding: 5px 10px; margin: 0; background: #28a745;">✓</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="card">
+            <h3 class="card-title">User Management</h3>
+            <div class="grid grid-2">
+                <div class="card text-center">
+                    <div style="font-size: 24px; margin-bottom: 10px;">👤</div>
+                    <div>Add New User</div>
+                </div>
+                <div class="card text-center">
+                    <div style="font-size: 24px; margin-bottom: 10px;">⚙️</div>
+                    <div>Manage Vets</div>
+                </div>
+                <div class="card text-center">
+                    <div style="font-size: 24px; margin-bottom: 10px;">👥</div>
+                    <div>All Users</div>
+                </div>
+                <div class="card text-center">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🔐</div>
+                    <div>Roles & Permissions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Activity -->
+        <div class="card">
+            <h3 class="card-title">System Activity</h3>
+            <div class="list-item">
+                <div class="list-icon">✓</div>
+                <div class="list-content">
+                    <div class="list-title">Vet account for Dr. Lee approved</div>
+                    <div class="list-subtitle">Admin_JohnDoe - 2 hours ago</div>
+                </div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">➕</div>
+                <div class="list-content">
+                    <div class="list-title">New user 'sarah_p' registered</div>
+                    <div class="list-subtitle">System - 5 hours ago</div>
+                </div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon">⚠️</div>
+                <div class="list-content">
+                    <div class="list-title">Failed login attempt for 'admin'</div>
+                    <div class="list-subtitle">IP: 192.168.1.10 - 1 day ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="nav">
+        <a href="dashboard.html" class="nav-item">
+            <div class="nav-icon">🏠</div>
+            <div>Vet View</div>
+        </a>
+        <a href="dashboard.html" class="nav-item active">
+            <div class="nav-icon">👑</div>
+            <div>Admin View</div>
+        </a>
+        <a href="users.html" class="nav-item">
+            <div class="nav-icon">👥</div>
+            <div>Users</div>
+        </a>
+        <a href="analytics.html" class="nav-item">
+            <div class="nav-icon">📊</div>
+            <div>Analytics</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </a>
+    </div>
+</body>
+</html>
