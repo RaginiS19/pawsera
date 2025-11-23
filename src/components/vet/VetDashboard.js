@@ -61,7 +61,7 @@ export default function VetDashboard() {
       const userData = {
         name: user.displayName || user.email?.split('@')[0] || 'Dr. Unknown'
       };
-      
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const vetName = userData.name;
@@ -107,7 +107,7 @@ export default function VetDashboard() {
           appointmentDate.setHours(0, 0, 0, 0);
           return appointmentDate > today && (a.status === 'confirmed' || a.status === 'pending');
         })
-                  .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
                   .slice(0, 10);
 
       // Combine today's and upcoming appointments
@@ -131,10 +131,17 @@ export default function VetDashboard() {
       
       // Load patient records (medical history) for all patients
       const allPatientRecords = [];
-      vetPatients.forEach(patient => {
-        const originalPetId = patient.id.replace(`sample_`, '').replace(`_${user.uid}_${vetPatients.indexOf(patient)}`, '');
+      vetPatients.forEach((patient, index) => {
+        // Extract original pet ID from the transformed ID
+        // Format: sample_pet1_${user.uid}_${index}
+        const idParts = patient.id.split('_');
+        const originalPetId = idParts.length > 1 ? idParts[1] : patient.id;
         const records = getDummyMedicalHistoryByPetId(originalPetId);
-        allPatientRecords.push(...records.map(r => ({ ...r, petId: patient.id, petName: patient.name })));
+        allPatientRecords.push(...records.map(r => ({ 
+          ...r, 
+          petId: patient.id, // Use the transformed patient ID for matching
+          petName: patient.name 
+        })));
       });
       
       // Load educational resources (dummy data for now)
@@ -155,7 +162,7 @@ export default function VetDashboard() {
         upcomingAppointments: upcomingAppointments.length,
         sampleAppts: sampleAppts
       });
-      
+
       setProfile(userData);
       setAppointments(vetAppointments);
       setPatients(vetPatients);
@@ -164,7 +171,7 @@ export default function VetDashboard() {
       setEducationalResources(dummyResources);
     } catch (err) {
       console.error('Could not load vet dashboard:', err);
-      setError(err.message || 'Failed to load vet dashboard');
+        setError(err.message || 'Failed to load vet dashboard');
     } finally {
       setLoading(false);
     }
@@ -189,16 +196,23 @@ export default function VetDashboard() {
 
   const handleAddAppointmentNote = async (appointmentId, note) => {
     try {
+      if (!note || !note.trim()) {
+        setError('Please enter a note before saving');
+        return;
+      }
+      
       const updateData = {
-        vetNotes: note,
+        vetNotes: note.trim(),
         notesUpdatedAt: new Date().toISOString()
       };
       
       // Update local state
       setAppointments(prev => prev.map(apt => 
-        apt.id === appointmentId ? { ...apt, ...updateData } : apt
+        apt.id === appointmentId ? { ...apt, ...updateData, notes: apt.notes || '' } : apt
       ));
-      setAppointmentNotes(prev => ({ ...prev, [appointmentId]: note }));
+      
+      // Keep the note in the notes state for display
+      setAppointmentNotes(prev => ({ ...prev, [appointmentId]: note.trim() }));
       
       // Try to save to Firebase
       if (db) {
@@ -206,38 +220,68 @@ export default function VetDashboard() {
           await updateDoc(doc(db, 'appointments', appointmentId), updateData);
         } catch (err) {
           console.warn('Could not save note to Firebase:', err);
+          // Continue even if Firebase fails - local state is updated
         }
       }
       
-      setSuccessMessage('Note added successfully!');
+      setSuccessMessage('Note saved successfully!');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      setError(err.message || 'Failed to add note');
+      console.error('Error saving note:', err);
+      setError(err.message || 'Failed to save note');
     }
   };
 
   const handleCreatePatientRecord = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     try {
       setError(null);
+      
+      // Validation
+      if (!patientRecordForm.petId) {
+        setError('Please select a pet');
+        return;
+      }
+      if (!patientRecordForm.title || !patientRecordForm.title.trim()) {
+        setError('Please enter a title');
+        return;
+      }
+      if (!patientRecordForm.doctor || !patientRecordForm.doctor.trim()) {
+        setError('Please enter doctor name');
+        return;
+      }
+      if (!patientRecordForm.date) {
+        setError('Please select a date');
+        return;
+      }
+      if (!patientRecordForm.description || !patientRecordForm.description.trim()) {
+        setError('Please enter a description');
+        return;
+      }
+      
+      const selectedPatient = patients.find(p => p.id === patientRecordForm.petId);
       const newRecord = {
         ...patientRecordForm,
-        id: `record_${Date.now()}`,
-        petName: patients.find(p => p.id === patientRecordForm.petId)?.name || 'Unknown',
+        id: `record_${Date.now()}_${user.uid}`,
+        petId: patientRecordForm.petId, // Use the transformed patient ID
+        petName: selectedPatient?.name || 'Unknown',
         createdAt: new Date().toISOString(),
         vetId: user.uid,
         vetName: profile?.name || 'Dr. Unknown'
       };
       
-      // Add to local state
+      // Add to local state immediately
       setPatientRecords(prev => [newRecord, ...prev]);
       
       // Try to save to Firebase
       if (db) {
         try {
           await addDoc(collection(db, 'medical_history'), newRecord);
+          console.log('✅ Patient record saved to Firebase');
         } catch (err) {
           console.warn('Could not save to Firebase:', err);
+          // Continue - local state is already updated
         }
       }
       
@@ -253,6 +297,7 @@ export default function VetDashboard() {
       setSuccessMessage('Patient record created successfully!');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
+      console.error('Error creating patient record:', err);
       setError(err.message || 'Failed to create patient record');
     }
   };
@@ -430,12 +475,12 @@ export default function VetDashboard() {
 
         {/* Error Message */}
         {error && (
-          <div style={{
-            margin: '16px',
+        <div style={{ 
+          margin: '16px', 
             padding: '12px',
             backgroundColor: '#FEE2E2',
             border: '1px solid #FCA5A5',
-            borderRadius: '8px',
+          borderRadius: '8px',
             color: '#991B1B',
             fontSize: '14px'
           }}>
@@ -587,21 +632,21 @@ export default function VetDashboard() {
                 <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1F2937', margin: 0 }}>
                   Today's Appointments
                 </h3>
-                <button
+          <button
                   onClick={() => navigate('/vet/scheduling')}
-                  style={{
+            style={{
                     backgroundColor: '#F7931E',
                     color: 'white',
-                    border: 'none',
+              border: 'none',
                     borderRadius: '8px',
                     padding: '6px 12px',
                     fontSize: '12px',
                     fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
+              cursor: 'pointer'
+            }}
+          >
                   View All
-                </button>
+          </button>
               </div>
 
               {appointments.filter(a => {
@@ -637,7 +682,7 @@ export default function VetDashboard() {
                     <div 
                       key={appointment.id} 
                       onClick={() => handleAppointmentClick(appointment)}
-                      style={{ 
+            style={{
                         backgroundColor: 'white', 
                         borderRadius: '12px', 
                         padding: '16px',
@@ -660,7 +705,7 @@ export default function VetDashboard() {
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#1F2937', marginBottom: '4px' }}>
                             {appointment.petName || 'Pet'}
-                          </div>
+        </div>
                           <div style={{ fontSize: '14px', color: '#6B7280', marginBottom: '8px' }}>
                             Owner: {appointment.ownerName || 'Unknown'}
                           </div>
@@ -743,13 +788,13 @@ export default function VetDashboard() {
                       onClick={() => handleAppointmentClick(appointment)}
                       style={{ 
                         backgroundColor: 'white', 
-                        borderRadius: '12px', 
-                        padding: '12px',
-                        marginBottom: '8px',
+                    borderRadius: '12px', 
+                    padding: '12px',
+                    marginBottom: '8px',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                         border: '1px solid #F3F4F6',
-                        display: 'flex',
-                        alignItems: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
                         gap: '12px',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease'
@@ -763,41 +808,41 @@ export default function VetDashboard() {
                         e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
                       }}
                     >
-                      <div style={{ 
-                        width: '36px', 
-                        height: '36px', 
-                        borderRadius: '50%', 
-                        backgroundColor: '#F7931E',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontSize: '16px'
-                      }}>
+                    <div style={{ 
+                      width: '36px', 
+                      height: '36px', 
+                      borderRadius: '50%', 
+                      backgroundColor: '#F7931E',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      fontSize: '16px'
+                    }}>
                         🐾
-                      </div>
-                      <div style={{ flex: 1 }}>
+                    </div>
+                    <div style={{ flex: 1 }}>
                         <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#1F2937' }}>
                           {appointment.petName || 'Pet'} - {appointment.purpose || 'Checkup'}
-                        </div>
+                      </div>
                         <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '2px' }}>
                           {new Date(appointment.date).toLocaleDateString('en-US', { 
                             weekday: 'short', 
                             month: 'short', 
                             day: 'numeric' 
                           })} at {appointment.time || '10:00 AM'}
-                        </div>
                       </div>
-                      <div style={{ color: '#6B7280', fontSize: '14px' }}>›</div>
                     </div>
-                  ))
+                    <div style={{ color: '#6B7280', fontSize: '14px' }}>›</div>
+                  </div>
+                ))
               )}
             </div>
 
-            {/* Patient Records Section */}
+            {/* Patient List Section */}
             <div style={{ padding: '0 16px', marginTop: '20px' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1F2937', marginBottom: '12px' }}>
-                Patient Records
+                Patients
               </h3>
 
               {patients.length === 0 ? (
@@ -816,13 +861,13 @@ export default function VetDashboard() {
                     key={patient.id} 
                     onClick={() => handlePatientClick(patient)}
                     style={{ 
-                      backgroundColor: '#F9FAFB', 
-                      borderRadius: '12px', 
-                      padding: '12px',
-                      marginBottom: '8px',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
+                    backgroundColor: '#F9FAFB', 
+                    borderRadius: '12px', 
+                    padding: '12px',
+                    marginBottom: '8px',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
                       gap: '12px',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease'
@@ -900,14 +945,15 @@ export default function VetDashboard() {
                 </button>
               </div>
 
-              <div style={{ 
-                backgroundColor: 'white', 
-                borderRadius: '12px', 
+                <div style={{ 
+                  backgroundColor: 'white', 
+                  borderRadius: '12px', 
                 padding: '16px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 border: '1px solid #F3F4F6',
                 maxHeight: '300px',
-                overflowY: 'auto'
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch'
               }}>
                 {patientRecords.slice(0, 5).length === 0 ? (
                   <p style={{ color: '#6B7280', margin: 0, fontSize: '14px', textAlign: 'center' }}>
@@ -915,34 +961,50 @@ export default function VetDashboard() {
                   </p>
                 ) : (
                   patientRecords.slice(0, 5).map(record => (
-                    <div key={record.id} style={{
-                      padding: '12px',
-                      marginBottom: '8px',
-                      backgroundColor: '#F9FAFB',
-                      borderRadius: '8px',
-                      border: '1px solid #E5E7EB'
-                    }}>
+                    <div 
+                      key={record.id} 
+                      onClick={() => {
+                        alert(`Record Details:\n\nTitle: ${record.title}\nPet: ${record.petName}\nDate: ${new Date(record.date).toLocaleDateString()}\nType: ${record.type}\nDoctor: ${record.doctor || 'N/A'}\n\nDescription:\n${record.description || 'No description'}`);
+                      }}
+                      style={{
+                        padding: '12px',
+                        marginBottom: '8px',
+                        backgroundColor: '#F9FAFB',
+                        borderRadius: '8px',
+                        border: '1px solid #E5E7EB',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#F3F4F6';
+                        e.currentTarget.style.transform = 'translateX(4px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#F9FAFB';
+                        e.currentTarget.style.transform = 'translateX(0)';
+                      }}
+                    >
                       <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#1F2937', marginBottom: '4px' }}>
                         {record.title}
-                      </div>
+                  </div>
                       <div style={{ fontSize: '12px', color: '#6B7280' }}>
                         {record.petName} • {new Date(record.date).toLocaleDateString()} • {record.type}
                       </div>
                     </div>
                   ))
                 )}
-              </div>
-            </div>
-
+                  </div>
+                </div>
+                
             {/* Pet Health Trends Analytics */}
             <div style={{ padding: '0 16px', marginBottom: '24px' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1F2937', marginBottom: '12px' }}>
                 Pet Health Trends Analytics
               </h3>
-              <div style={{ 
-                backgroundColor: 'white', 
-                borderRadius: '12px', 
-                padding: '20px',
+                <div style={{ 
+                  backgroundColor: 'white', 
+                  borderRadius: '12px', 
+                  padding: '20px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 border: '1px solid #F3F4F6'
               }}>
@@ -954,7 +1016,7 @@ export default function VetDashboard() {
                         <div style={{ textAlign: 'center', padding: '12px', backgroundColor: '#F9FAFB', borderRadius: '8px' }}>
                           <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#F7931E' }}>{trends.totalRecords}</div>
                           <div style={{ fontSize: '12px', color: '#6B7280' }}>Total Records</div>
-                        </div>
+                  </div>
                         <div style={{ textAlign: 'center', padding: '12px', backgroundColor: '#F9FAFB', borderRadius: '8px' }}>
                           <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#F7931E' }}>{Object.keys(trends.byType).length}</div>
                           <div style={{ fontSize: '12px', color: '#6B7280' }}>Record Types</div>
@@ -974,7 +1036,7 @@ export default function VetDashboard() {
                     </>
                   );
                 })()}
-              </div>
+                  </div>
             </div>
 
             {/* Educational Resources */}
@@ -1003,11 +1065,11 @@ export default function VetDashboard() {
                 >
                   + Upload
                 </button>
-              </div>
-
-              <div style={{ 
-                backgroundColor: 'white', 
-                borderRadius: '12px', 
+                </div>
+                
+                <div style={{ 
+                  backgroundColor: 'white', 
+                  borderRadius: '12px', 
                 padding: '16px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 border: '1px solid #F3F4F6'
@@ -1048,7 +1110,7 @@ export default function VetDashboard() {
                     </div>
                   ))
                 )}
-              </div>
+                  </div>
             </div>
 
             {/* Care Recommendations */}
@@ -1077,11 +1139,11 @@ export default function VetDashboard() {
                 >
                   + Send
                 </button>
-              </div>
-
-              <div style={{ 
-                backgroundColor: 'white', 
-                borderRadius: '12px', 
+                </div>
+                
+                <div style={{ 
+                  backgroundColor: 'white', 
+                  borderRadius: '12px', 
                 padding: '16px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 border: '1px solid #F3F4F6',
@@ -1117,7 +1179,7 @@ export default function VetDashboard() {
               style={{
                 backgroundColor: 'white',
                 borderRadius: '16px',
-                padding: '20px',
+                  padding: '20px',
                 maxWidth: '355px',
                 width: '100%',
                 maxHeight: '85vh',
@@ -1146,13 +1208,13 @@ export default function VetDashboard() {
                 >
                   ×
                 </button>
-              </div>
+                  </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
                 <div>
                   <strong style={{ color: '#6B7280', fontSize: '12px' }}>Pet:</strong>
                   <div style={{ color: '#1F2937', fontSize: '14px', marginTop: '4px' }}>{selectedAppointment.petName}</div>
-                </div>
+                  </div>
                 <div>
                   <strong style={{ color: '#6B7280', fontSize: '12px' }}>Owner:</strong>
                   <div style={{ color: '#1F2937', fontSize: '14px', marginTop: '4px' }}>{selectedAppointment.ownerName}</div>
@@ -1167,10 +1229,12 @@ export default function VetDashboard() {
                   <strong style={{ color: '#6B7280', fontSize: '12px' }}>Purpose:</strong>
                   <div style={{ color: '#1F2937', fontSize: '14px', marginTop: '4px' }}>{selectedAppointment.purpose}</div>
                 </div>
-                {selectedAppointment.notes && (
+                {(selectedAppointment.notes || selectedAppointment.vetNotes || appointmentNotes[selectedAppointment.id]) && (
                   <div>
                     <strong style={{ color: '#6B7280', fontSize: '12px' }}>Notes:</strong>
-                    <div style={{ color: '#1F2937', fontSize: '14px', marginTop: '4px' }}>{selectedAppointment.notes}</div>
+                    <div style={{ color: '#1F2937', fontSize: '14px', marginTop: '4px' }}>
+                      {selectedAppointment.vetNotes || appointmentNotes[selectedAppointment.id] || selectedAppointment.notes}
+                    </div>
                   </div>
                 )}
                 <div>
@@ -1186,9 +1250,9 @@ export default function VetDashboard() {
                     marginTop: '4px'
                   }}>
                     {selectedAppointment.status || 'Pending'}
-                  </div>
                 </div>
               </div>
+            </div>
 
               {/* Add Notes Section */}
               <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '16px' }}>
@@ -1197,7 +1261,7 @@ export default function VetDashboard() {
                 </div>
                 <textarea
                   placeholder="Add notes about this appointment..."
-                  value={appointmentNotes[selectedAppointment.id] || ''}
+                  value={appointmentNotes[selectedAppointment.id] || selectedAppointment.vetNotes || ''}
                   onChange={(e) => setAppointmentNotes(prev => ({ ...prev, [selectedAppointment.id]: e.target.value }))}
                   style={{
                     width: '100%',
@@ -1207,13 +1271,19 @@ export default function VetDashboard() {
                     border: '1px solid #D1D5DB',
                     fontSize: '14px',
                     resize: 'vertical',
-                    marginBottom: '12px'
+                    marginBottom: '12px',
+                    boxSizing: 'border-box'
                   }}
                 />
                 <button
-                  onClick={() => {
-                    if (appointmentNotes[selectedAppointment.id]) {
-                      handleAddAppointmentNote(selectedAppointment.id, appointmentNotes[selectedAppointment.id]);
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const note = appointmentNotes[selectedAppointment.id] || selectedAppointment.vetNotes || '';
+                    if (note.trim()) {
+                      handleAddAppointmentNote(selectedAppointment.id, note);
+                    } else {
+                      setError('Please enter a note before saving');
                     }
                   }}
                   style={{
@@ -1263,18 +1333,23 @@ export default function VetDashboard() {
                 width: '100%',
                 maxHeight: '85vh',
                 overflowY: 'auto',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                overflowX: 'hidden',
+                WebkitOverflowScrolling: 'touch',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                display: 'flex',
+                flexDirection: 'column'
               }}
             >
               <div style={{ 
                 display: 'flex', 
                 justifyContent: 'space-between', 
                 alignItems: 'center',
-                marginBottom: '20px'
+                marginBottom: '20px',
+                flexShrink: 0
               }}>
                 <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: '#1F2937' }}>
                   Patient Details
-                </h3>
+              </h3>
                 <button
                   onClick={() => setSelectedPatient(null)}
                   style={{
@@ -1288,8 +1363,12 @@ export default function VetDashboard() {
                   ×
                 </button>
               </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+              
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '12px' 
+              }}>
                 <div>
                   <strong style={{ color: '#6B7280', fontSize: '12px' }}>Name:</strong>
                   <div style={{ color: '#1F2937', fontSize: '14px', marginTop: '4px' }}>{selectedPatient.name}</div>
@@ -1330,33 +1409,55 @@ export default function VetDashboard() {
                     </div>
                   </div>
                 )}
-              </div>
 
-              {/* Patient Records */}
-              <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '16px' }}>
-                <div style={{ fontSize: '14px', fontWeight: '600', color: '#1F2937', marginBottom: '12px' }}>
-                  Medical Records
-                </div>
+                {/* Patient Records */}
+                <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '16px', marginTop: '8px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#1F2937', marginBottom: '12px' }}>
+                    Medical Records
+                  </div>
                 {patientRecords.filter(r => r.petId === selectedPatient.id).length === 0 ? (
                   <p style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>No medical records yet</p>
                 ) : (
-                  <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                    {patientRecords.filter(r => r.petId === selectedPatient.id).slice(0, 5).map(record => (
-                      <div key={record.id} style={{
-                        padding: '10px',
-                        marginBottom: '8px',
-                        backgroundColor: '#F9FAFB',
-                        borderRadius: '8px',
-                        border: '1px solid #E5E7EB'
-                      }}>
+                  <div style={{ maxHeight: '200px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                    {patientRecords.filter(r => r.petId === selectedPatient.id).slice(0, 10).map(record => (
+                      <div 
+                        key={record.id} 
+                        onClick={() => {
+                          // Show record details in an alert or could create a modal
+                          alert(`Record Details:\n\nTitle: ${record.title}\nDate: ${new Date(record.date).toLocaleDateString()}\nType: ${record.type}\nDoctor: ${record.doctor || 'N/A'}\n\nDescription:\n${record.description || 'No description'}`);
+                        }}
+                        style={{
+                          padding: '10px',
+                          marginBottom: '8px',
+                          backgroundColor: '#F9FAFB',
+                          borderRadius: '8px',
+                          border: '1px solid #E5E7EB',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#F3F4F6';
+                          e.currentTarget.style.transform = 'translateX(4px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '#F9FAFB';
+                          e.currentTarget.style.transform = 'translateX(0)';
+                        }}
+                      >
                         <div style={{ fontSize: '13px', fontWeight: '600', color: '#1F2937' }}>{record.title}</div>
                         <div style={{ fontSize: '11px', color: '#6B7280', marginTop: '4px' }}>
                           {new Date(record.date).toLocaleDateString()} • {record.type}
                         </div>
+                        {record.description && (
+                          <div style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {record.description.substring(0, 50)}...
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
                 )}
+                </div>
               </div>
             </div>
           </div>
@@ -1392,21 +1493,25 @@ export default function VetDashboard() {
           >
             <div 
               onClick={(e) => e.stopPropagation()}
-              style={{
-                backgroundColor: 'white',
+                  style={{ 
+                    backgroundColor: 'white', 
                 borderRadius: '16px',
-                padding: '20px',
+                    padding: '20px',
                 maxWidth: '355px',
                 width: '100%',
                 maxHeight: '85vh',
                 overflowY: 'auto',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                overflowX: 'hidden',
+                WebkitOverflowScrolling: 'touch',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                display: 'flex',
+                flexDirection: 'column'
               }}
             >
-              <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: 'bold', color: '#1F2937' }}>
+              <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: 'bold', color: '#1F2937', flexShrink: 0 }}>
                 Add Patient Record
               </h3>
-              <form onSubmit={handleCreatePatientRecord}>
+              <form onSubmit={handleCreatePatientRecord} style={{ flex: '1 1 auto', overflowY: 'auto' }}>
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500', color: '#374151' }}>
                     Pet *
@@ -1564,31 +1669,31 @@ export default function VetDashboard() {
                       padding: '10px',
                       backgroundColor: '#f0f0f0',
                       color: '#333',
-                      border: 'none',
+                    border: 'none',
                       borderRadius: '8px',
                       fontSize: '14px',
                       fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
+                    cursor: 'pointer'
+                  }}
+                >
                     Cancel
-                  </button>
-                  <button
+                </button>
+                <button
                     type="submit"
-                    style={{
+                  style={{ 
                       flex: 1,
                       padding: '10px',
                       backgroundColor: '#F7931E',
                       color: 'white',
-                      border: 'none',
+                    border: 'none',
                       borderRadius: '8px',
                       fontSize: '14px',
                       fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
+                    cursor: 'pointer'
+                  }}
+                >
                     Create Record
-                  </button>
+                </button>
                 </div>
               </form>
             </div>
@@ -1615,8 +1720,8 @@ export default function VetDashboard() {
           >
             <div 
               onClick={(e) => e.stopPropagation()}
-              style={{
-                backgroundColor: 'white',
+                  style={{ 
+                    backgroundColor: 'white', 
                 borderRadius: '16px',
                 padding: '20px',
                 maxWidth: '355px',
@@ -1630,18 +1735,22 @@ export default function VetDashboard() {
               <div style={{ 
                 border: '2px dashed #D1D5DB',
                 borderRadius: '8px',
-                padding: '20px',
-                textAlign: 'center',
+                    padding: '20px',
+                    textAlign: 'center',
                 marginBottom: '16px'
               }}>
                 <input
                   type="file"
-                  accept=".pdf,.doc,.docx"
+                  accept=".pdf,.doc,.docx,.txt"
                   onChange={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const file = e.target.files[0];
                     if (file) {
                       handleUploadEducationalResource(file);
                     }
+                    // Reset input so same file can be selected again
+                    e.target.value = '';
                   }}
                   disabled={uploadingResource}
                   style={{ display: 'none' }}
@@ -1649,9 +1758,15 @@ export default function VetDashboard() {
                 />
                 <label
                   htmlFor="resource-upload"
+                  onClick={(e) => {
+                    if (!uploadingResource) {
+                      e.stopPropagation();
+                    }
+                  }}
                   style={{
                     cursor: uploadingResource ? 'not-allowed' : 'pointer',
-                    display: 'block'
+                    display: 'block',
+                    pointerEvents: uploadingResource ? 'none' : 'auto'
                   }}
                 >
                   <div style={{ fontSize: '32px', marginBottom: '8px' }}>📄</div>
@@ -1659,7 +1774,7 @@ export default function VetDashboard() {
                     {uploadingResource ? 'Uploading...' : 'Click to upload or drag and drop'}
                   </div>
                   <div style={{ fontSize: '12px', color: '#9CA3AF' }}>
-                    PDF, DOC, DOCX (max 10MB)
+                    PDF, DOC, DOCX, TXT (max 10MB)
                   </div>
                 </label>
               </div>
@@ -1670,15 +1785,15 @@ export default function VetDashboard() {
                   padding: '10px',
                   backgroundColor: '#f0f0f0',
                   color: '#333',
-                  border: 'none',
+                    border: 'none',
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
+                    cursor: 'pointer'
+                  }}
+                >
                 Close
-              </button>
+                </button>
             </div>
           </div>
         )}
@@ -1712,10 +1827,10 @@ export default function VetDashboard() {
           >
             <div 
               onClick={(e) => e.stopPropagation()}
-              style={{
-                backgroundColor: 'white',
+                  style={{ 
+                    backgroundColor: 'white', 
                 borderRadius: '16px',
-                padding: '20px',
+                    padding: '20px',
                 maxWidth: '355px',
                 width: '100%',
                 maxHeight: '85vh',
@@ -1846,13 +1961,13 @@ export default function VetDashboard() {
                       padding: '10px',
                       backgroundColor: '#f0f0f0',
                       color: '#333',
-                      border: 'none',
+                    border: 'none',
                       borderRadius: '8px',
                       fontSize: '14px',
                       fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
+                    cursor: 'pointer'
+                  }}
+                >
                     Cancel
                   </button>
                   <button
@@ -1870,15 +1985,15 @@ export default function VetDashboard() {
                     }}
                   >
                     Send
-                  </button>
-                </div>
+                </button>
+              </div>
               </form>
             </div>
           </div>
         )}
 
-          </div>
-          <BottomNavigation userType="vet" />
+        </div>
+        <BottomNavigation userType="vet" />
         </div>
       </div>
     </div>

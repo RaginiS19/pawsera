@@ -45,6 +45,30 @@ export default function VetSettings() {
 
   const user = auth?.currentUser || null;
 
+  // Helper functions for localStorage
+  const saveSettingsToLocalStorage = (settings) => {
+    try {
+      const userId = user?.uid || 'default';
+      localStorage.setItem(`pawsera_vet_settings_${userId}`, JSON.stringify(settings));
+      console.log('✅ Vet settings saved to localStorage');
+    } catch (err) {
+      console.warn('Could not save vet settings to localStorage:', err);
+    }
+  };
+
+  const loadSettingsFromLocalStorage = () => {
+    try {
+      const userId = user?.uid || 'default';
+      const saved = localStorage.getItem(`pawsera_vet_settings_${userId}`);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (err) {
+      console.warn('Could not load vet settings from localStorage:', err);
+    }
+    return null;
+  };
+
   useEffect(() => {
     if (!user) {
       navigate('/');
@@ -58,48 +82,86 @@ export default function VetSettings() {
       setLoading(true);
       setError(null);
       
+      // Load from localStorage first
+      const localSettings = loadSettingsFromLocalStorage();
+      
       // Try multiple methods to find user data (same as Login.js)
       let userData = null;
       if (db) {
         try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            userData = { id: userDoc.id, ...userDoc.data() };
-            console.log('✅ Found vet user data by UID');
-          }
-        } catch (uidError) {
-          console.warn('Could not get vet user by UID:', uidError);
-        }
-        
-        // If UID lookup failed, try by email query
-        if (!userData && user.email) {
           try {
-            const emailUserData = await findUserByEmail(user.email);
-            if (emailUserData) {
-              userData = emailUserData;
-              console.log('✅ Found vet user data by email query');
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              userData = { id: userDoc.id, ...userDoc.data() };
+              console.log('✅ Found vet user data by UID');
             }
-          } catch (emailError) {
-            console.warn('Could not get vet user by email query:', emailError);
+          } catch (uidError) {
+            // Check if it's a permission error
+            if (uidError.code === 'permission-denied' || uidError.message?.includes('permission') || uidError.message?.includes('insufficient')) {
+              console.warn('Permission denied accessing user data by UID, will use localStorage:', uidError);
+            } else {
+              console.warn('Could not get vet user by UID:', uidError);
+            }
           }
-        }
-        
-        // If still not found, try by email as document ID
-        if (!userData && user.email) {
-          try {
-            const emailDoc = await getDoc(doc(db, 'users', user.email));
-            if (emailDoc.exists()) {
-              userData = { id: emailDoc.id, ...emailDoc.data() };
-              console.log('✅ Found vet user data by email as document ID');
+          
+          // If UID lookup failed, try by email query
+          if (!userData && user.email) {
+            try {
+              const emailUserData = await findUserByEmail(user.email);
+              if (emailUserData) {
+                userData = emailUserData;
+                console.log('✅ Found vet user data by email query');
+              }
+            } catch (emailError) {
+              // Check if it's a permission error
+              if (emailError.code === 'permission-denied' || emailError.message?.includes('permission') || emailError.message?.includes('insufficient')) {
+                console.warn('Permission denied accessing user data by email query, will use localStorage:', emailError);
+              } else {
+                console.warn('Could not get vet user by email query:', emailError);
+              }
             }
-          } catch (emailDocError) {
-            console.warn('Could not get vet user by email as document ID:', emailDocError);
+          }
+          
+          // If still not found, try by email as document ID
+          if (!userData && user.email) {
+            try {
+              const emailDoc = await getDoc(doc(db, 'users', user.email));
+              if (emailDoc.exists()) {
+                userData = { id: emailDoc.id, ...emailDoc.data() };
+                console.log('✅ Found vet user data by email as document ID');
+              }
+            } catch (emailDocError) {
+              // Check if it's a permission error
+              if (emailDocError.code === 'permission-denied' || emailDocError.message?.includes('permission') || emailDocError.message?.includes('insufficient')) {
+                console.warn('Permission denied accessing user data by email as document ID, will use localStorage:', emailDocError);
+              } else {
+                console.warn('Could not get vet user by email as document ID:', emailDocError);
+              }
+            }
+          }
+        } catch (firestoreErr) {
+          // Check if it's a permission error
+          const isPermissionError = firestoreErr.code === 'permission-denied' || 
+                                   firestoreErr.message?.includes('permission') || 
+                                   firestoreErr.message?.includes('insufficient');
+          
+          if (isPermissionError) {
+            console.warn('Firestore permission denied, using localStorage only:', firestoreErr);
+            // Don't show error to user for permission issues
+            setError(null);
+          } else {
+            console.warn('Could not load from Firestore:', firestoreErr);
           }
         }
       }
       
+      // Merge with localStorage settings if available
+      if (localSettings) {
+        userData = { ...userData, ...localSettings };
+      }
+      
       // If still not found, use defaults
-      if (!userData) {
+      if (!userData || Object.keys(userData).length === 0) {
         userData = {
           name: user.displayName || user.email?.split('@')[0] || '',
           email: user.email || '',
@@ -128,30 +190,97 @@ export default function VetSettings() {
         };
       }
       
-      const appointmentsSnap = await getDocs(collection(db, 'appointments'));
-
-      // Get appointments for this vet
-      const vetAppointments = appointmentsSnap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(a => a.vetName === userData.name || a.vetId === user.uid);
+      // Try to get appointments, but handle permission errors gracefully
+      let vetAppointments = [];
+      if (db) {
+        try {
+          const appointmentsSnap = await getDocs(collection(db, 'appointments'));
+          vetAppointments = appointmentsSnap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(a => a.vetName === userData.name || a.vetId === user.uid);
+        } catch (appointmentsErr) {
+          console.warn('Could not load appointments from Firestore (permissions issue):', appointmentsErr);
+          // Continue with empty array
+          vetAppointments = [];
+        }
+      }
 
       setProfile(userData);
       setAppointments(vetAppointments);
+      
+      // Populate formData with user data - ensure all fields are set
       setFormData({
-        name: userData.name || '',
-        email: userData.email || '',
+        name: userData.name || user.displayName || user.email?.split('@')[0] || '',
+        email: userData.email || user.email || '',
         phone: userData.phone || '',
         specialization: userData.specialization || 'General Practice',
-        clinicName: userData.clinicName || '',
+        clinicName: userData.clinicName || userData.clinic || '',
         clinicAddress: userData.clinicAddress || '',
         licenseNumber: userData.licenseNumber || '',
         experience: userData.experience || '',
         bio: userData.bio || '',
-        availability: userData.availability || formData.availability,
-        notifications: userData.notifications || formData.notifications
+        availability: userData.availability || {
+          monday: { start: '09:00', end: '17:00', available: true },
+          tuesday: { start: '09:00', end: '17:00', available: true },
+          wednesday: { start: '09:00', end: '17:00', available: true },
+          thursday: { start: '09:00', end: '17:00', available: true },
+          friday: { start: '09:00', end: '17:00', available: true },
+          saturday: { start: '10:00', end: '14:00', available: false },
+          sunday: { start: '10:00', end: '14:00', available: false }
+        },
+        notifications: userData.notifications || {
+          newAppointments: true,
+          appointmentReminders: true,
+          patientUpdates: true,
+          emergencyAlerts: true,
+          promotionalEmails: false
+        }
       });
     } catch (err) {
-      setError(err.message || 'Failed to load vet settings');
+      console.error('Error loading vet settings:', err);
+      // Check if it's a permission error
+      const isPermissionError = err.code === 'permission-denied' || 
+                               err.message?.includes('permission') || 
+                               err.message?.includes('insufficient');
+      
+      if (isPermissionError) {
+        // Don't show error for permission issues - use defaults
+        setError(null);
+        const localSettings = loadSettingsFromLocalStorage();
+        if (localSettings) {
+          setFormData({
+            name: localSettings.name || user.displayName || user.email?.split('@')[0] || '',
+            email: localSettings.email || user.email || '',
+            phone: localSettings.phone || '',
+            specialization: localSettings.specialization || 'General Practice',
+            clinicName: localSettings.clinicName || localSettings.clinic || '',
+            clinicAddress: localSettings.clinicAddress || '',
+            licenseNumber: localSettings.licenseNumber || '',
+            experience: localSettings.experience || '',
+            bio: localSettings.bio || '',
+            availability: localSettings.availability || formData.availability,
+            notifications: localSettings.notifications || formData.notifications
+          });
+          setProfile(localSettings);
+        } else {
+          // Use defaults
+          setFormData({
+            name: user.displayName || user.email?.split('@')[0] || '',
+            email: user.email || '',
+            phone: '',
+            specialization: 'General Practice',
+            clinicName: '',
+            clinicAddress: '',
+            licenseNumber: '',
+            experience: '',
+            bio: '',
+            availability: formData.availability,
+            notifications: formData.notifications
+          });
+        }
+      } else {
+        setError(err.message || 'Failed to load vet settings');
+      }
     } finally {
       setLoading(false);
     }
@@ -202,12 +331,22 @@ export default function VetSettings() {
             await updateDoc(doc(db, 'users', user.uid), updateData);
             console.log('✅ Vet profile updated in Firestore with UID');
           } catch (uidErr) {
-            // If update fails, try setDoc with merge
-            try {
-              await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
-              console.log('✅ Vet profile saved in Firestore with UID (setDoc)');
-            } catch (setDocErr) {
-              console.warn('Could not save vet profile with UID:', setDocErr);
+            // Check if it's a permission error
+            if (uidErr.code === 'permission-denied' || uidErr.message?.includes('permission') || uidErr.message?.includes('insufficient')) {
+              console.warn('Permission denied saving to Firestore, saving to localStorage only:', uidErr);
+              // Don't throw error - just save to localStorage
+            } else {
+              // If update fails for other reasons, try setDoc with merge
+              try {
+                await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
+                console.log('✅ Vet profile saved in Firestore with UID (setDoc)');
+              } catch (setDocErr) {
+                if (setDocErr.code === 'permission-denied' || setDocErr.message?.includes('permission') || setDocErr.message?.includes('insufficient')) {
+                  console.warn('Permission denied saving to Firestore, saving to localStorage only:', setDocErr);
+                } else {
+                  console.warn('Could not save vet profile with UID:', setDocErr);
+                }
+              }
             }
           }
           
@@ -217,13 +356,26 @@ export default function VetSettings() {
               await setDoc(doc(db, 'users', user.email), updateData, { merge: true });
               console.log('✅ Vet profile also saved with email as document ID');
             } catch (emailErr) {
-              console.warn('Could not save vet profile with email as document ID:', emailErr);
+              if (emailErr.code === 'permission-denied' || emailErr.message?.includes('permission') || emailErr.message?.includes('insufficient')) {
+                console.warn('Permission denied saving with email, using localStorage only:', emailErr);
+              } else {
+                console.warn('Could not save vet profile with email as document ID:', emailErr);
+              }
             }
           }
         } catch (firestoreErr) {
-          console.warn('Could not update vet profile in Firestore:', firestoreErr);
+          // Check if it's a permission error
+          if (firestoreErr.code === 'permission-denied' || firestoreErr.message?.includes('permission') || firestoreErr.message?.includes('insufficient')) {
+            console.warn('Permission denied accessing Firestore, using localStorage only:', firestoreErr);
+            // Don't show error to user - localStorage will handle it
+          } else {
+            console.warn('Could not update vet profile in Firestore:', firestoreErr);
+          }
         }
       }
+      
+      // Always save to localStorage
+      saveSettingsToLocalStorage(updateData);
       
       // Update local state
       setProfile(updateData);
@@ -757,11 +909,20 @@ export default function VetSettings() {
                             await updateDoc(doc(db, 'users', user.uid), updateData);
                             console.log('✅ Vet availability updated in Firestore with UID');
                           } catch (uidErr) {
-                            try {
-                              await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
-                              console.log('✅ Vet availability saved in Firestore with UID (setDoc)');
-                            } catch (setDocErr) {
-                              console.warn('Could not save vet availability with UID:', setDocErr);
+                            // Check if it's a permission error
+                            if (uidErr.code === 'permission-denied' || uidErr.message?.includes('permission') || uidErr.message?.includes('insufficient')) {
+                              console.warn('Permission denied saving to Firestore, saving to localStorage only:', uidErr);
+                            } else {
+                              try {
+                                await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
+                                console.log('✅ Vet availability saved in Firestore with UID (setDoc)');
+                              } catch (setDocErr) {
+                                if (setDocErr.code === 'permission-denied' || setDocErr.message?.includes('permission') || setDocErr.message?.includes('insufficient')) {
+                                  console.warn('Permission denied saving to Firestore, saving to localStorage only:', setDocErr);
+                                } else {
+                                  console.warn('Could not save vet availability with UID:', setDocErr);
+                                }
+                              }
                             }
                           }
                           
@@ -771,13 +932,30 @@ export default function VetSettings() {
                               await setDoc(doc(db, 'users', user.email), updateData, { merge: true });
                               console.log('✅ Vet availability also saved with email as document ID');
                             } catch (emailErr) {
-                              console.warn('Could not save vet availability with email as document ID:', emailErr);
+                              if (emailErr.code === 'permission-denied' || emailErr.message?.includes('permission') || emailErr.message?.includes('insufficient')) {
+                                console.warn('Permission denied saving with email, using localStorage only:', emailErr);
+                              } else {
+                                console.warn('Could not save vet availability with email as document ID:', emailErr);
+                              }
                             }
                           }
                         } catch (firestoreErr) {
-                          console.warn('Could not update vet availability in Firestore:', firestoreErr);
+                          // Check if it's a permission error
+                          if (firestoreErr.code === 'permission-denied' || firestoreErr.message?.includes('permission') || firestoreErr.message?.includes('insufficient')) {
+                            console.warn('Permission denied accessing Firestore, using localStorage only:', firestoreErr);
+                          } else {
+                            console.warn('Could not update vet availability in Firestore:', firestoreErr);
+                          }
                         }
                       }
+                      
+                      // Always save to localStorage
+                      const availabilityUpdate = {
+                        ...profile,
+                        availability: formData.availability,
+                        updatedAt: new Date().toISOString()
+                      };
+                      saveSettingsToLocalStorage(availabilityUpdate);
                       
                       setProfile(prev => ({ ...prev, availability: formData.availability }));
                       setShowAvailability(false);
@@ -942,11 +1120,20 @@ export default function VetSettings() {
                             await updateDoc(doc(db, 'users', user.uid), updateData);
                             console.log('✅ Vet notifications updated in Firestore with UID');
                           } catch (uidErr) {
-                            try {
-                              await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
-                              console.log('✅ Vet notifications saved in Firestore with UID (setDoc)');
-                            } catch (setDocErr) {
-                              console.warn('Could not save vet notifications with UID:', setDocErr);
+                            // Check if it's a permission error
+                            if (uidErr.code === 'permission-denied' || uidErr.message?.includes('permission') || uidErr.message?.includes('insufficient')) {
+                              console.warn('Permission denied saving to Firestore, saving to localStorage only:', uidErr);
+                            } else {
+                              try {
+                                await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
+                                console.log('✅ Vet notifications saved in Firestore with UID (setDoc)');
+                              } catch (setDocErr) {
+                                if (setDocErr.code === 'permission-denied' || setDocErr.message?.includes('permission') || setDocErr.message?.includes('insufficient')) {
+                                  console.warn('Permission denied saving to Firestore, saving to localStorage only:', setDocErr);
+                                } else {
+                                  console.warn('Could not save vet notifications with UID:', setDocErr);
+                                }
+                              }
                             }
                           }
                           
@@ -956,13 +1143,30 @@ export default function VetSettings() {
                               await setDoc(doc(db, 'users', user.email), updateData, { merge: true });
                               console.log('✅ Vet notifications also saved with email as document ID');
                             } catch (emailErr) {
-                              console.warn('Could not save vet notifications with email as document ID:', emailErr);
+                              if (emailErr.code === 'permission-denied' || emailErr.message?.includes('permission') || emailErr.message?.includes('insufficient')) {
+                                console.warn('Permission denied saving with email, using localStorage only:', emailErr);
+                              } else {
+                                console.warn('Could not save vet notifications with email as document ID:', emailErr);
+                              }
                             }
                           }
                         } catch (firestoreErr) {
-                          console.warn('Could not update vet notifications in Firestore:', firestoreErr);
+                          // Check if it's a permission error
+                          if (firestoreErr.code === 'permission-denied' || firestoreErr.message?.includes('permission') || firestoreErr.message?.includes('insufficient')) {
+                            console.warn('Permission denied accessing Firestore, using localStorage only:', firestoreErr);
+                          } else {
+                            console.warn('Could not update vet notifications in Firestore:', firestoreErr);
+                          }
                         }
                       }
+                      
+                      // Always save to localStorage
+                      const notificationsUpdate = {
+                        ...profile,
+                        notifications: formData.notifications,
+                        updatedAt: new Date().toISOString()
+                      };
+                      saveSettingsToLocalStorage(notificationsUpdate);
                       
                       setProfile(prev => ({ ...prev, notifications: formData.notifications }));
                       setShowNotifications(false);

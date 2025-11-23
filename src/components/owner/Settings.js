@@ -126,7 +126,12 @@ export default function Settings() {
               console.log('✅ Found user data by UID');
             }
           } catch (uidError) {
-            console.warn('Could not get user by UID:', uidError);
+            // Check if it's a permission error
+            if (uidError.code === 'permission-denied' || uidError.message?.includes('permission') || uidError.message?.includes('insufficient')) {
+              console.warn('Permission denied accessing user data by UID, will use localStorage:', uidError);
+            } else {
+              console.warn('Could not get user by UID:', uidError);
+            }
           }
           
           // If UID lookup failed, try by email query
@@ -138,7 +143,12 @@ export default function Settings() {
                 console.log('✅ Found user data by email query');
               }
             } catch (emailError) {
-              console.warn('Could not get user by email query:', emailError);
+              // Check if it's a permission error
+              if (emailError.code === 'permission-denied' || emailError.message?.includes('permission') || emailError.message?.includes('insufficient')) {
+                console.warn('Permission denied accessing user data by email query, will use localStorage:', emailError);
+              } else {
+                console.warn('Could not get user by email query:', emailError);
+              }
             }
           }
           
@@ -151,7 +161,12 @@ export default function Settings() {
                 console.log('✅ Found user data by email as document ID');
               }
             } catch (emailDocError) {
-              console.warn('Could not get user by email as document ID:', emailDocError);
+              // Check if it's a permission error
+              if (emailDocError.code === 'permission-denied' || emailDocError.message?.includes('permission') || emailDocError.message?.includes('insufficient')) {
+                console.warn('Permission denied accessing user data by email as document ID, will use localStorage:', emailDocError);
+              } else {
+                console.warn('Could not get user by email as document ID:', emailDocError);
+              }
             }
           }
           
@@ -170,11 +185,18 @@ export default function Settings() {
             };
           }
           
-          const appointmentsSnap = await getDocs(collection(db, 'appointments'));
-
-          const firebaseAppointments = appointmentsSnap.docs
-            .map(d => ({ id: d.id, ...d.data() }))
-            .filter(a => a.ownerID === user.uid);
+          // Try to get appointments, but handle permission errors gracefully
+          let firebaseAppointments = [];
+          try {
+            const appointmentsSnap = await getDocs(collection(db, 'appointments'));
+            firebaseAppointments = appointmentsSnap.docs
+              .map(d => ({ id: d.id, ...d.data() }))
+              .filter(a => a.ownerID === user.uid);
+          } catch (appointmentsErr) {
+            console.warn('Could not load appointments from Firestore (permissions issue):', appointmentsErr);
+            // Continue with empty array - will use localStorage appointments
+            firebaseAppointments = [];
+          }
 
           // Merge Firebase appointments with localStorage appointments (same logic as Schedule page)
           // First filter by ownerID to ensure user-specific data isolation
@@ -197,7 +219,19 @@ export default function Settings() {
             userData = { ...userData, ...localSettings };
           }
         } catch (firestoreErr) {
-          console.warn('Could not load from Firestore, using localStorage:', firestoreErr);
+          // Check if it's a permission error
+          const isPermissionError = firestoreErr.code === 'permission-denied' || 
+                                   firestoreErr.message?.includes('permission') || 
+                                   firestoreErr.message?.includes('insufficient');
+          
+          if (isPermissionError) {
+            console.warn('Firestore permission denied, using localStorage only:', firestoreErr);
+            // Don't show error to user for permission issues - just use localStorage
+            setError(null);
+          } else {
+            console.warn('Could not load from Firestore, using localStorage:', firestoreErr);
+          }
+          
           // Use localStorage appointments if Firebase fails
           userAppointments = localAppointments.filter(a => a.ownerID === user.uid);
           
@@ -311,12 +345,22 @@ export default function Settings() {
             await updateDoc(doc(db, 'users', user.uid), updateData);
             console.log('✅ Profile updated in Firestore with UID');
           } catch (uidErr) {
-            // If update fails, try setDoc with merge
-            try {
-              await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
-              console.log('✅ Profile saved in Firestore with UID (setDoc)');
-            } catch (setDocErr) {
-              console.warn('Could not save with UID:', setDocErr);
+            // Check if it's a permission error
+            if (uidErr.code === 'permission-denied' || uidErr.message?.includes('permission') || uidErr.message?.includes('insufficient')) {
+              console.warn('Permission denied saving to Firestore, saving to localStorage only:', uidErr);
+              // Don't throw error - just save to localStorage
+            } else {
+              // If update fails for other reasons, try setDoc with merge
+              try {
+                await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
+                console.log('✅ Profile saved in Firestore with UID (setDoc)');
+              } catch (setDocErr) {
+                if (setDocErr.code === 'permission-denied' || setDocErr.message?.includes('permission') || setDocErr.message?.includes('insufficient')) {
+                  console.warn('Permission denied saving to Firestore, saving to localStorage only:', setDocErr);
+                } else {
+                  console.warn('Could not save with UID:', setDocErr);
+                }
+              }
             }
           }
           
@@ -326,11 +370,21 @@ export default function Settings() {
               await setDoc(doc(db, 'users', user.email), updateData, { merge: true });
               console.log('✅ Profile also saved with email as document ID');
             } catch (emailErr) {
-              console.warn('Could not save with email as document ID:', emailErr);
+              if (emailErr.code === 'permission-denied' || emailErr.message?.includes('permission') || emailErr.message?.includes('insufficient')) {
+                console.warn('Permission denied saving with email, using localStorage only:', emailErr);
+              } else {
+                console.warn('Could not save with email as document ID:', emailErr);
+              }
             }
           }
         } catch (firestoreErr) {
-          console.warn('Could not update in Firestore, saving locally:', firestoreErr);
+          // Check if it's a permission error
+          if (firestoreErr.code === 'permission-denied' || firestoreErr.message?.includes('permission') || firestoreErr.message?.includes('insufficient')) {
+            console.warn('Permission denied accessing Firestore, using localStorage only:', firestoreErr);
+            // Don't show error to user - localStorage will handle it
+          } else {
+            console.warn('Could not update in Firestore, saving locally:', firestoreErr);
+          }
         }
       }
       
@@ -1092,7 +1146,13 @@ export default function Settings() {
                           await updateDoc(doc(db, 'users', user.uid), updateData);
                           console.log('✅ Notifications updated in Firestore');
                         } catch (firestoreErr) {
-                          console.warn('Could not update in Firestore, saving locally:', firestoreErr);
+                          // Check if it's a permission error
+                          if (firestoreErr.code === 'permission-denied' || firestoreErr.message?.includes('permission') || firestoreErr.message?.includes('insufficient')) {
+                            console.warn('Permission denied saving to Firestore, saving to localStorage only:', firestoreErr);
+                            // Don't show error to user - localStorage will handle it
+                          } else {
+                            console.warn('Could not update in Firestore, saving locally:', firestoreErr);
+                          }
                         }
                       }
                       

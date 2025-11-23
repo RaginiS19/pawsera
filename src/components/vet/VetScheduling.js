@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../api/firebase';
 import { collection, doc, getDocs, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 import { logoutUser } from '../../api/authService';
+import { getDummyAppointments, getDummyPets } from '../../api/dummyData';
 import BottomNavigation from '../common/BottomNavigation';
 
 export default function VetScheduling() {
@@ -41,32 +42,86 @@ export default function VetScheduling() {
       setLoading(true);
       setError(null);
       
-      const [userDoc, appointmentsSnap, petsSnap, usersSnap] = await Promise.all([
-        getDoc(doc(db, 'users', user.uid)),
-        getDocs(collection(db, 'appointments')),
-        getDocs(collection(db, 'pets')),
-        getDocs(collection(db, 'users'))
-      ]);
-
-      const vetData = userDoc.exists() ? userDoc.data() : {
+      // Always use sample data for consistent experience across all vets (same as dashboard)
+      const userData = {
         name: user.displayName || user.email?.split('@')[0] || 'Dr. Unknown'
       };
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const vetName = userData.name;
+      
+      // Create sample appointments with current/future dates for ALL vets (15 appointments)
+      const dummyAppts = getDummyAppointments();
+      const sampleAppts = dummyAppts.slice(0, 15).map((apt, index) => {
+        // Create dates: first one today, rest in future
+        const appointmentDate = new Date(today);
+        appointmentDate.setDate(today.getDate() + index); // Today, tomorrow, day after, etc.
+        const dateStr = appointmentDate.toISOString().split('T')[0];
+        
+        return {
+          ...apt,
+          id: `sample_${apt.id}_${user.uid}_${index}`,
+          vetId: user.uid,
+          vetID: user.uid,
+          vetName: vetName,
+          date: dateStr, // Update to current/future date
+          status: index === 0 ? 'confirmed' : (index < 3 ? 'pending' : 'confirmed'), // Mix of statuses
+          time: apt.time || ['10:00 AM', '2:00 PM', '11:30 AM', '3:30 PM', '9:00 AM', '1:00 PM', '4:00 PM', '10:30 AM', '2:30 PM', '11:00 AM', '3:00 PM', '9:30 AM', '1:30 PM', '4:30 PM', '12:00 PM'][index] // Ensure times are set
+        };
+      });
+      
+      // Sort appointments by date
+      const vetAppointments = sampleAppts.sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        if (dateA.getTime() === dateB.getTime()) {
+          // If same date, sort by time
+          return (a.time || '').localeCompare(b.time || '');
+        }
+        return dateA - dateB;
+      });
+      
+      // Use dummy pets
+      const dummyPets = getDummyPets();
+      const allPets = dummyPets;
+      const allUsers = [];
 
-      // Get appointments for this vet
-      const vetAppointments = appointmentsSnap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(a => a.vetName === vetData.name || a.vetId === user.uid)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      const allPets = petsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-      const allUsers = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-      setVetProfile(vetData);
+      setVetProfile(userData);
       setAppointments(vetAppointments);
       setPets(allPets);
       setUsers(allUsers);
+      
+      console.log('Vet Scheduling Data Loaded:', {
+        appointmentsCount: vetAppointments.length,
+        petsCount: allPets.length
+      });
     } catch (err) {
+      console.error('Could not load vet scheduling data:', err);
       setError(err.message || 'Failed to load scheduling data');
+      // Use dummy data as fallback
+      const userData = {
+        name: user.displayName || user.email?.split('@')[0] || 'Dr. Unknown'
+      };
+      const dummyAppts = getDummyAppointments();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const sampleAppts = dummyAppts.slice(0, 15).map((apt, index) => {
+        const appointmentDate = new Date(today);
+        appointmentDate.setDate(today.getDate() + index);
+        return {
+          ...apt,
+          id: `sample_${apt.id}_${user.uid}_${index}`,
+          vetId: user.uid,
+          vetName: userData.name,
+          date: appointmentDate.toISOString().split('T')[0],
+          status: index === 0 ? 'confirmed' : (index < 3 ? 'pending' : 'confirmed')
+        };
+      });
+      setVetProfile(userData);
+      setAppointments(sampleAppts);
+      setPets(getDummyPets());
+      setUsers([]);
     } finally {
       setLoading(false);
     }
