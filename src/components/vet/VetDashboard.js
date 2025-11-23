@@ -1092,7 +1092,7 @@ export default function VetDashboard() {
                       <div>
                         <div style={{ fontSize: '14px', fontWeight: '600', color: '#1F2937' }}>{resource.title}</div>
                         <div style={{ fontSize: '12px', color: '#6B7280' }}>{resource.type} • {resource.uploadDate}</div>
-                      </div>
+                  </div>
                       <button
                         onClick={() => window.open(resource.url, '_blank')}
                         style={{
@@ -1992,8 +1992,8 @@ export default function VetDashboard() {
           </div>
         )}
 
-        </div>
-        <BottomNavigation userType="vet" />
+          </div>
+          <BottomNavigation userType="vet" />
         </div>
       </div>
     </div>

@@ -257,21 +257,105 @@ export default function OwnerLogin() {
             </div>
           </form>
 
-          <div className="register-section">
-            <p className="register-text">
+          <div className="register-section" style={{ 
+            marginTop: '24px', 
+            paddingTop: '24px', 
+            borderTop: '1px solid #E5E7EB',
+            textAlign: 'center'
+          }}>
+            <p className="register-text" style={{ 
+              fontSize: '15px', 
+              color: '#374151', 
+              marginBottom: '16px',
+              fontWeight: '500'
+            }}>
               Don't have an account?
-              <Link to="/signup" className="register-link"> Sign up as Pet Owner</Link>
             </p>
-            <div style={{ marginTop: '12px', textAlign: 'center' }}>
-              <p style={{ fontSize: '14px', color: '#6B7280', margin: '8px 0' }}>
-                <Link to="/vet/signup" className="register-link" style={{ fontSize: '14px' }}>
-                  Sign up as Veterinarian
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '12px',
+              marginBottom: '16px'
+            }}>
+              <Link 
+                to="/signup" 
+                className="register-link" 
+                style={{ 
+                  display: 'block',
+                  padding: '12px 20px',
+                  backgroundColor: '#F7931E',
+                  color: '#FFFFFF',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  boxShadow: '0 2px 8px rgba(247, 147, 30, 0.3)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#E6821A';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#F7931E';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                🐾 Sign up as Pet Owner
+              </Link>
+              <div style={{ 
+                display: 'flex', 
+                gap: '8px', 
+                justifyContent: 'center',
+                flexWrap: 'wrap'
+              }}>
+                <Link 
+                  to="/vet/signup" 
+                  className="register-link" 
+                  style={{ 
+                    padding: '10px 16px',
+                    backgroundColor: '#FFFFFF',
+                    color: '#F7931E',
+                    border: '1px solid #F7931E',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#FEF3E8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                >
+                  🩺 Veterinarian
                 </Link>
-                {' • '}
-                <Link to="/admin/signup" className="register-link" style={{ fontSize: '14px' }}>
-                  Sign up as Administrator
+                <Link 
+                  to="/admin/signup" 
+                  className="register-link" 
+                  style={{ 
+                    padding: '10px 16px',
+                    backgroundColor: '#FFFFFF',
+                    color: '#F7931E',
+                    border: '1px solid #F7931E',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#FEF3E8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#FFFFFF';
+                  }}
+                >
+                  👤 Administrator
                 </Link>
-              </p>
+              </div>
             </div>
           </div>
         </div>
