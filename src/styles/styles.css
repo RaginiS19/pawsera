@@ -1608,7 +1608,7 @@ body {
 /* ===== BOTTOM NAVIGATION STYLES ===== */
 
 .bottom-navigation {
-  position: fixed !important;
+  position: absolute !important;
   bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
@@ -1623,6 +1623,8 @@ body {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
+  border-bottom-left-radius: 32px !important;
+  border-bottom-right-radius: 32px !important;
 }
 
 .nav-item {
@@ -1749,14 +1751,13 @@ body {
   height: 100%;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 32px;
-  overflow: auto;
+  overflow: hidden !important;
   position: relative !important;
   display: flex;
   flex-direction: column;
   max-width: 100%;
   max-height: 100%;
   min-height: 100% !important;
-  overflow-y: auto !important;
 }
 
 .mobile-screen::before {
@@ -1780,6 +1781,9 @@ body {
   flex-direction: column;
   background-color: transparent;
   position: relative;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
   z-index: 2;
   padding: 0;
   overflow-y: auto;
