@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, storage } from '../../api/firebase';
-import { collection, doc, getDocs, getDoc, addDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, setDoc, query, where } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { logoutUser } from '../../api/authService';
 import { getDummyAppointments, getDummyPets, getDummyMedicalHistoryByPetId } from '../../api/dummyData';
@@ -49,6 +49,46 @@ export default function VetDashboard() {
       navigate('/');
       return;
     }
+    
+    // Check user role - only allow Vet users
+    const checkUserRole = async () => {
+      try {
+        if (db) {
+          let userData = null;
+          try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              userData = userDoc.data();
+            }
+          } catch (err) {
+            // Try with email
+            try {
+              const usersSnap = await getDocs(query(collection(db, 'users'), where('email', '==', user.email)));
+              if (!usersSnap.empty) {
+                userData = usersSnap.docs[0].data();
+              }
+            } catch (err2) {
+              console.warn('Could not check user role:', err2);
+            }
+          }
+          
+          if (userData && userData.role && userData.role !== 'Vet' && userData.role !== 'Veterinarian') {
+            // Redirect based on role
+            if (userData.role === 'Admin') {
+              navigate('/admin/dashboard');
+              return;
+            } else if (userData.role === 'PetOwner' || userData.role === 'Pet Owner') {
+              navigate('/home');
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Error checking user role:', err);
+      }
+    };
+    
+    checkUserRole();
     loadData();
   }, [navigate, user]);
 

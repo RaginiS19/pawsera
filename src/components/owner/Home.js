@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { auth, db } from '../../api/firebase';
-import { collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, updateDoc, query, where } from 'firebase/firestore';
 import { logoutUser } from '../../api/authService';
 import { fetchWeather } from '../../api/weatherService';
 import { getDummyPets, getDummyAppointments, getDummyWeatherData, getDummyNotifications, getDummyPetMilestones } from '../../api/dummyData';
@@ -41,6 +41,46 @@ export default function OwnerHome() {
       navigate('/');
       return;
     }
+    
+    // Check user role - only allow PetOwner users
+    const checkUserRole = async () => {
+      try {
+        if (db) {
+          let userData = null;
+          try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              userData = userDoc.data();
+            }
+          } catch (err) {
+            // Try with email
+            try {
+              const usersSnap = await getDocs(query(collection(db, 'users'), where('email', '==', user.email)));
+              if (!usersSnap.empty) {
+                userData = usersSnap.docs[0].data();
+              }
+            } catch (err2) {
+              console.warn('Could not check user role:', err2);
+            }
+          }
+          
+          if (userData && userData.role) {
+            // Redirect based on role
+            if (userData.role === 'Admin') {
+              navigate('/admin/dashboard');
+              return;
+            } else if (userData.role === 'Vet' || userData.role === 'Veterinarian') {
+              navigate('/vet/dashboard');
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Error checking user role:', err);
+      }
+    };
+    
+    checkUserRole();
 
     const loadUserData = async () => {
       try {

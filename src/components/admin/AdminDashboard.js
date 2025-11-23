@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../api/firebase';
-import { collection, doc, getDocs, getDoc, updateDoc, addDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, getDoc, updateDoc, addDoc, query, where } from 'firebase/firestore';
 import { logoutUser } from '../../api/authService';
 import { getDummyUsers, getDummySystemActivity, getDummyAppointments, getDummyPets } from '../../api/dummyData';
 import BottomNavigation from '../common/BottomNavigation';
@@ -28,6 +28,46 @@ export default function AdminDashboard() {
       navigate('/');
       return;
     }
+    
+    // Check user role - only allow Admin users
+    const checkUserRole = async () => {
+      try {
+        if (db) {
+          let userData = null;
+          try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              userData = userDoc.data();
+            }
+          } catch (err) {
+            // Try with email
+            try {
+              const usersSnap = await getDocs(query(collection(db, 'users'), where('email', '==', user.email)));
+              if (!usersSnap.empty) {
+                userData = usersSnap.docs[0].data();
+              }
+            } catch (err2) {
+              console.warn('Could not check user role:', err2);
+            }
+          }
+          
+          if (userData && userData.role && userData.role !== 'Admin') {
+            // Redirect based on role
+            if (userData.role === 'Vet' || userData.role === 'Veterinarian') {
+              navigate('/vet/dashboard');
+              return;
+            } else if (userData.role === 'PetOwner' || userData.role === 'Pet Owner') {
+              navigate('/home');
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Error checking user role:', err);
+      }
+    };
+    
+    checkUserRole();
     loadData();
   }, [navigate, user]);
 
