@@ -48,6 +48,9 @@ export default function OwnerSignup() {
       navigate('/home', { state: { isNewUser: true, userName: name } });
     } catch (err) {
       console.error('Registration error:', err);
+      console.error('Error code:', err.code);
+      console.error('Error message:', err.message);
+      
       // Provide user-friendly error messages
       if (err.code === 'auth/email-already-in-use') {
         setError('This email is already registered. Please sign in instead.');
@@ -55,6 +58,14 @@ export default function OwnerSignup() {
         setError('Please enter a valid email address.');
       } else if (err.code === 'auth/weak-password') {
         setError('Password is too weak. Please use a stronger password.');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setError('This domain is not authorized. Please contact support.');
+        console.error('⚠️ Domain not authorized in Firebase. Add your Vercel domain to Firebase Authorized Domains.');
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('Email/password authentication is not enabled. Please contact support.');
+        console.error('⚠️ Email/Password authentication not enabled in Firebase Console.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection and try again.');
       } else {
         setError(err.message || 'Registration failed. Please try again.');
       }
