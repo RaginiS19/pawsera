@@ -184,8 +184,10 @@ export default function OwnerLogin() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            height: '100%',
-            position: 'relative'
+            height: '100vh',
+            position: 'relative',
+            overflowY: 'auto',
+            overflowX: 'hidden'
           }}
         >
           <div className="screen-content" style={{ 
