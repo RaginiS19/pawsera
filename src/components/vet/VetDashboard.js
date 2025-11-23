@@ -1992,10 +1992,10 @@ export default function VetDashboard() {
           </div>
         )}
 
-          </div>
-          <BottomNavigation userType="vet" />
         </div>
+        <BottomNavigation userType="vet" />
       </div>
     </div>
+  </div>
   );
 }
