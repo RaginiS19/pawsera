@@ -180,12 +180,14 @@ export default function OwnerLogin() {
   return (
     <div className="screen-container">
       <div className="mobile-phone-frame">
-        <div className="mobile-screen" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          position: 'relative'
-        }}>
+        <div className="mobile-screen"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            position: 'relative'
+          }}
+        >
           <div className="screen-content" style={{ 
             overflowY: 'auto', 
             overflowX: 'hidden', 
