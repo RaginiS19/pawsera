@@ -54,14 +54,23 @@ export default function AdminAppointments() {
         const owner = dummyUsers.find(u => u.id === appointment.ownerId || u.userID === appointment.ownerId);
         const pet = dummyPets.find(p => p.id === appointment.petId);
         const vet = dummyUsers.find(u => u.id === appointment.vetId && u.role === 'Vet');
+        
+        // Get clinic name
+        const clinicName = appointment.clinic || vet?.clinic || vet?.clinicName || 'Unknown Clinic';
+        
+        // Create address from available data
+        const vetAddress = vet?.clinicAddress || vet?.address || appointment.vetAddress || 
+          (vet?.city ? `${clinicName}, ${vet.city}` : clinicName);
+        
         return {
           ...appointment,
           ownerName: owner?.name || appointment.ownerName || 'Unknown Owner',
-          ownerEmail: owner?.email || 'Unknown Email',
+          ownerEmail: owner?.email || appointment.ownerEmail || 'Unknown Email',
           petName: pet?.name || appointment.petName || 'Unknown Pet',
-          petBreed: pet?.breed || 'Unknown Breed',
+          petBreed: pet?.breed || appointment.petBreed || 'Unknown Breed',
           vetName: vet?.name || appointment.vetName || 'Unknown Vet',
-          clinic: appointment.clinic || vet?.clinicName || 'Unknown Clinic'
+          vetAddress: vetAddress,
+          clinic: clinicName
         };
       });
 
@@ -878,49 +887,126 @@ export default function AdminAppointments() {
                 </button>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div>
-                  <strong>Pet:</strong> {selectedAppointment.petName} ({selectedAppointment.petBreed})
-                </div>
-                <div>
-                  <strong>Owner:</strong> {selectedAppointment.ownerName}
-                </div>
-                <div>
-                  <strong>Email:</strong> {selectedAppointment.ownerEmail}
-                </div>
-                <div>
-                  <strong>Veterinarian:</strong> {selectedAppointment.vetName}
-                </div>
-                <div>
-                  <strong>Address:</strong> {selectedAppointment.vetAddress}
-                </div>
-                <div>
-                  <strong>Date & Time:</strong> {new Date(selectedAppointment.date).toLocaleDateString()} at {selectedAppointment.time}
-                </div>
-                <div>
-                  <strong>Purpose:</strong> {selectedAppointment.purpose}
-                </div>
-                {selectedAppointment.notes && (
-                  <div>
-                    <strong>Notes:</strong> {selectedAppointment.notes}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#F9FAFB', 
+                  borderRadius: '8px',
+                  border: '1px solid #E5E7EB'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '4px', fontWeight: '500' }}>PET INFORMATION</div>
+                  <div style={{ fontSize: '15px', fontWeight: '600', color: '#1F2937' }}>
+                    {selectedAppointment.petName || 'Unknown Pet'}
                   </div>
-                )}
-                <div>
-                  <strong>Status:</strong> 
-                  <span style={{ 
-                    marginLeft: '8px',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    backgroundColor: getStatusColor(selectedAppointment.status),
-                    color: 'white'
-                  }}>
-                    {getStatusText(selectedAppointment.status)}
-                  </span>
+                  <div style={{ fontSize: '13px', color: '#6B7280', marginTop: '2px' }}>
+                    {selectedAppointment.petBreed || 'Breed not specified'}
+                  </div>
                 </div>
-                <div>
-                  <strong>Created:</strong> {new Date(selectedAppointment.createdAt).toLocaleString()}
+
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#F9FAFB', 
+                  borderRadius: '8px',
+                  border: '1px solid #E5E7EB'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '4px', fontWeight: '500' }}>OWNER INFORMATION</div>
+                  <div style={{ fontSize: '15px', fontWeight: '600', color: '#1F2937' }}>
+                    {selectedAppointment.ownerName || 'Unknown Owner'}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#6B7280', marginTop: '2px' }}>
+                    {selectedAppointment.ownerEmail || 'Email not available'}
+                  </div>
+                </div>
+
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#F9FAFB', 
+                  borderRadius: '8px',
+                  border: '1px solid #E5E7EB'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '4px', fontWeight: '500' }}>VETERINARIAN</div>
+                  <div style={{ fontSize: '15px', fontWeight: '600', color: '#1F2937' }}>
+                    {selectedAppointment.vetName || 'Unknown Veterinarian'}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#6B7280', marginTop: '2px' }}>
+                    {selectedAppointment.clinic || 'Clinic not specified'}
+                  </div>
+                  {selectedAppointment.vetAddress && (
+                    <div style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '4px' }}>
+                      {selectedAppointment.vetAddress}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#F9FAFB', 
+                  borderRadius: '8px',
+                  border: '1px solid #E5E7EB'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '4px', fontWeight: '500' }}>APPOINTMENT DETAILS</div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <div style={{ fontSize: '13px', color: '#6B7280', marginBottom: '2px' }}>Date & Time</div>
+                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#1F2937' }}>
+                      {selectedAppointment.date ? new Date(selectedAppointment.date).toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      }) : 'Date not set'} at {selectedAppointment.time || 'Time not set'}
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <div style={{ fontSize: '13px', color: '#6B7280', marginBottom: '2px' }}>Purpose</div>
+                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#1F2937' }}>
+                      {selectedAppointment.purpose || 'Not specified'}
+                    </div>
+                  </div>
+                  {selectedAppointment.notes && (
+                    <div>
+                      <div style={{ fontSize: '13px', color: '#6B7280', marginBottom: '2px' }}>Notes</div>
+                      <div style={{ fontSize: '14px', color: '#1F2937', lineHeight: '1.5' }}>
+                        {selectedAppointment.notes}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#F9FAFB', 
+                  borderRadius: '8px',
+                  border: '1px solid #E5E7EB',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div>
+                    <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '2px', fontWeight: '500' }}>STATUS</div>
+                    <span style={{ 
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      backgroundColor: getStatusColor(selectedAppointment.status),
+                      color: 'white',
+                      display: 'inline-block'
+                    }}>
+                      {getStatusText(selectedAppointment.status)}
+                    </span>
+                  </div>
+                  {selectedAppointment.createdAt && (
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '12px', color: '#6B7280', marginBottom: '2px', fontWeight: '500' }}>CREATED</div>
+                      <div style={{ fontSize: '12px', color: '#6B7280' }}>
+                        {new Date(selectedAppointment.createdAt).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric', 
+                          year: 'numeric' 
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
