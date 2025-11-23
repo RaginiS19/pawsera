@@ -335,6 +335,150 @@ export const dummyAppointments = [
     status: 'cancelled',
     notes: 'Cancelled due to scheduling conflict',
     createdAt: '2024-03-28T14:00:00Z'
+  },
+  {
+    id: 'apt7',
+    petId: 'pet2',
+    petName: 'Whiskers',
+    ownerId: 'owner1',
+    ownerName: 'Sarah Johnson',
+    vetId: 'vet1',
+    vetName: 'Dr. Olivia Bennett',
+    clinic: 'Downtown Animal Hospital',
+    date: '2024-04-22',
+    time: '2:00 PM',
+    purpose: 'Vaccination',
+    status: 'confirmed',
+    notes: 'Annual vaccination and health check',
+    createdAt: '2024-03-30T10:00:00Z'
+  },
+  {
+    id: 'apt8',
+    petId: 'pet3',
+    petName: 'Max',
+    ownerId: 'owner2',
+    ownerName: 'Michael Chen',
+    vetId: 'vet2',
+    vetName: 'Dr. Ethan Walker',
+    clinic: 'Emergency Pet Care Center',
+    date: '2024-04-19',
+    time: '10:30 AM',
+    purpose: 'Physical Therapy',
+    status: 'confirmed',
+    notes: 'Post-surgery physical therapy session',
+    createdAt: '2024-03-28T11:00:00Z'
+  },
+  {
+    id: 'apt9',
+    petId: 'pet4',
+    petName: 'Luna',
+    ownerId: 'owner3',
+    ownerName: 'Emily Rodriguez',
+    vetId: 'vet3',
+    vetName: 'Dr. Ava Mitchell',
+    clinic: 'Skin & Coat Veterinary Clinic',
+    date: '2024-04-24',
+    time: '3:30 PM',
+    purpose: 'Dermatology Consultation',
+    status: 'pending',
+    notes: 'Skin condition follow-up',
+    createdAt: '2024-04-01T09:00:00Z'
+  },
+  {
+    id: 'apt10',
+    petId: 'pet5',
+    petName: 'Charlie',
+    ownerId: 'owner4',
+    ownerName: 'David Thompson',
+    vetId: 'vet1',
+    vetName: 'Dr. Olivia Bennett',
+    clinic: 'Downtown Animal Hospital',
+    date: '2024-04-21',
+    time: '11:00 AM',
+    purpose: 'Wellness Exam',
+    status: 'confirmed',
+    notes: 'Routine wellness examination for puppy',
+    createdAt: '2024-04-02T14:00:00Z'
+  },
+  {
+    id: 'apt11',
+    petId: 'pet1',
+    petName: 'Buddy',
+    ownerId: 'owner1',
+    ownerName: 'Sarah Johnson',
+    vetId: 'vet2',
+    vetName: 'Dr. Ethan Walker',
+    clinic: 'Emergency Pet Care Center',
+    date: '2024-04-26',
+    time: '9:30 AM',
+    purpose: 'Blood Work',
+    status: 'pending',
+    notes: 'Routine blood panel and health screening',
+    createdAt: '2024-04-03T10:00:00Z'
+  },
+  {
+    id: 'apt12',
+    petId: 'pet2',
+    petName: 'Whiskers',
+    ownerId: 'owner1',
+    ownerName: 'Sarah Johnson',
+    vetId: 'vet3',
+    vetName: 'Dr. Ava Mitchell',
+    clinic: 'Skin & Coat Veterinary Clinic',
+    date: '2024-04-23',
+    time: '1:00 PM',
+    purpose: 'Allergy Testing',
+    status: 'confirmed',
+    notes: 'Comprehensive allergy panel',
+    createdAt: '2024-04-04T11:00:00Z'
+  },
+  {
+    id: 'apt13',
+    petId: 'pet3',
+    petName: 'Max',
+    ownerId: 'owner2',
+    ownerName: 'Michael Chen',
+    vetId: 'vet1',
+    vetName: 'Dr. Olivia Bennett',
+    clinic: 'Downtown Animal Hospital',
+    date: '2024-04-27',
+    time: '2:30 PM',
+    purpose: 'Medication Review',
+    status: 'pending',
+    notes: 'Review current medications and adjust dosage',
+    createdAt: '2024-04-05T12:00:00Z'
+  },
+  {
+    id: 'apt14',
+    petId: 'pet4',
+    petName: 'Luna',
+    ownerId: 'owner3',
+    ownerName: 'Emily Rodriguez',
+    vetId: 'vet2',
+    vetName: 'Dr. Ethan Walker',
+    clinic: 'Emergency Pet Care Center',
+    date: '2024-04-28',
+    time: '10:00 AM',
+    purpose: 'X-Ray Review',
+    status: 'confirmed',
+    notes: 'Review recent X-rays and discuss treatment plan',
+    createdAt: '2024-04-06T13:00:00Z'
+  },
+  {
+    id: 'apt15',
+    petId: 'pet5',
+    petName: 'Charlie',
+    ownerId: 'owner4',
+    ownerName: 'David Thompson',
+    vetId: 'vet3',
+    vetName: 'Dr. Ava Mitchell',
+    clinic: 'Skin & Coat Veterinary Clinic',
+    date: '2024-04-29',
+    time: '4:00 PM',
+    purpose: 'Behavioral Consultation',
+    status: 'pending',
+    notes: 'Discuss puppy behavior and training recommendations',
+    createdAt: '2024-04-07T14:00:00Z'
   }
 ];
 
@@ -378,6 +522,126 @@ export const dummySystemActivity = [
     user: 'System',
     timestamp: '3 days ago',
     icon: '💾'
+  },
+  {
+    id: 'activity6',
+    type: 'appointment',
+    message: 'Appointment cancelled for Max with Dr. Ethan Walker',
+    user: 'Michael Chen',
+    timestamp: '4 hours ago',
+    icon: '📅'
+  },
+  {
+    id: 'activity7',
+    type: 'registration',
+    message: 'New pet owner \'emily.rodriguez@email.com\' registered',
+    user: 'System',
+    timestamp: '6 hours ago',
+    icon: '👤'
+  },
+  {
+    id: 'activity8',
+    type: 'approval',
+    message: 'Vet account for Dr. Ava Mitchell approved',
+    user: 'Ragini Shirwalkar',
+    timestamp: '1 day ago',
+    icon: '🛡️'
+  },
+  {
+    id: 'activity9',
+    type: 'appointment',
+    message: 'Appointment completed for Whiskers with Dr. Ava Mitchell',
+    user: 'Sarah Johnson',
+    timestamp: '1 day ago',
+    icon: '✅'
+  },
+  {
+    id: 'activity10',
+    type: 'system',
+    message: 'Database optimization completed',
+    user: 'System',
+    timestamp: '2 days ago',
+    icon: '⚙️'
+  },
+  {
+    id: 'activity11',
+    type: 'registration',
+    message: 'New pet \'Luna\' added by Emily Rodriguez',
+    user: 'Emily Rodriguez',
+    timestamp: '2 days ago',
+    icon: '🐾'
+  },
+  {
+    id: 'activity12',
+    type: 'appointment',
+    message: 'Appointment rescheduled for Charlie with Dr. Olivia Bennett',
+    user: 'David Thompson',
+    timestamp: '3 days ago',
+    icon: '📅'
+  },
+  {
+    id: 'activity13',
+    type: 'system',
+    message: 'Security audit completed - no issues found',
+    user: 'System',
+    timestamp: '4 days ago',
+    icon: '🔒'
+  },
+  {
+    id: 'activity14',
+    type: 'vet_registration',
+    message: 'New vet \'Dr. James Wilson\' registered - pending approval',
+    user: 'System',
+    timestamp: '5 days ago',
+    icon: '👨‍⚕️'
+  },
+  {
+    id: 'activity15',
+    type: 'appointment',
+    message: 'Emergency appointment created for Buddy',
+    user: 'Sarah Johnson',
+    timestamp: '6 days ago',
+    icon: '🚨'
+  },
+  {
+    id: 'activity16',
+    type: 'system',
+    message: 'Performance metrics report generated',
+    user: 'System',
+    timestamp: '1 week ago',
+    icon: '📊'
+  },
+  {
+    id: 'activity17',
+    type: 'registration',
+    message: 'New admin account created',
+    user: 'System',
+    timestamp: '1 week ago',
+    icon: '👤'
+  },
+  {
+    id: 'activity18',
+    type: 'approval',
+    message: 'Vet account for Dr. Ethan Walker approved',
+    user: 'Ragini Shirwalkar',
+    timestamp: '1 week ago',
+    icon: '🛡️'
+  },
+  {
+    id: 'activity19',
+    type: 'system',
+    message: 'System update v2.1.0 deployed successfully',
+    user: 'System',
+    timestamp: '2 weeks ago',
+    icon: '🚀'
+  },
+  {
+    id: 'activity20',
+    type: 'appointment',
+    message: 'Bulk appointment import completed - 25 appointments added',
+    user: 'System',
+    timestamp: '2 weeks ago',
+    icon: '📥'
   }
 ];
 
