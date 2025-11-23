@@ -609,8 +609,8 @@ export default function VetSettings() {
                     </div>
                   </div>
                   <div className="settings-text">
-                    <div className="settings-title">Availability Settings</div>
-                    <p className="settings-subtitle">Set your working hours and schedule</p>
+                    <div className="settings-title" style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>Availability Settings</div>
+                    <p className="settings-subtitle" style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Set your working hours and schedule</p>
                   </div>
                 </div>
                 <div className="settings-action">
@@ -805,32 +805,43 @@ export default function VetSettings() {
           <div style={{ padding: '16px' }}>
             <div className="form-container">
               <div className="form-header">
-                <h2 className="form-title">Availability Settings</h2>
-                <p className="form-subtitle">Set your working hours for each day</p>
+                <h2 className="form-title" style={{ color: '#1F2937', fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>Availability Settings</h2>
+                <p className="form-subtitle" style={{ color: '#6B7280', fontSize: '14px', margin: 0 }}>Set your working hours for each day</p>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
                 {Object.entries(formData.availability).map(([day, schedule]) => (
-                  <div key={day} style={{ 
-                    border: '1px solid #e0e0e0', 
-                    borderRadius: '8px', 
-                    padding: '16px' 
+                  <div key={day} style={{
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    border: '1px solid #E5E7EB',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                   }}>
                     <div style={{ 
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'space-between',
-                      marginBottom: '12px'
+                      marginBottom: schedule.available ? '12px' : '0'
                     }}>
-                      <h4 style={{ 
-                        margin: 0, 
-                        fontSize: '16px', 
-                        fontWeight: '600',
-                        textTransform: 'capitalize'
+                      <div style={{ flex: 1 }}>
+                        <div style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px', textTransform: 'capitalize' }}>
+                          {day}
+                        </div>
+                      </div>
+                      <label style={{
+                        position: 'relative',
+                        width: '48px',
+                        height: '28px',
+                        backgroundColor: schedule.available ? '#F7931E' : '#D1D5DB',
+                        borderRadius: '14px',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s',
+                        flexShrink: 0,
+                        marginLeft: '16px'
                       }}>
-                        {day}
-                      </h4>
-                      <label className="toggle-switch">
                         <input
                           type="checkbox"
                           name={`availability.${day}.available`}
@@ -838,14 +849,24 @@ export default function VetSettings() {
                           onChange={handleInputChange}
                           style={{ display: 'none' }}
                         />
-                        <div className={`toggle-slider ${schedule.available ? 'active' : ''}`} />
+                        <div style={{
+                          position: 'absolute',
+                          top: '2px',
+                          left: schedule.available ? '22px' : '2px',
+                          width: '24px',
+                          height: '24px',
+                          backgroundColor: '#FFFFFF',
+                          borderRadius: '50%',
+                          transition: 'left 0.2s',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                        }} />
                       </label>
                     </div>
                     
                     {schedule.available && (
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '8px' }}>
                         <div style={{ flex: 1 }}>
-                          <label style={{ fontSize: '12px', color: '#666', marginBottom: '4px', display: 'block' }}>
+                          <label style={{ fontSize: '13px', color: '#6B7280', marginBottom: '4px', display: 'block', fontWeight: '500' }}>
                             Start Time
                           </label>
                           <input
@@ -854,11 +875,11 @@ export default function VetSettings() {
                             value={schedule.start}
                             onChange={handleInputChange}
                             className="form-input"
-                            style={{ padding: '8px' }}
+                            style={{ padding: '8px', color: '#1F2937' }}
                           />
                         </div>
                         <div style={{ flex: 1 }}>
-                          <label style={{ fontSize: '12px', color: '#666', marginBottom: '4px', display: 'block' }}>
+                          <label style={{ fontSize: '13px', color: '#6B7280', marginBottom: '4px', display: 'block', fontWeight: '500' }}>
                             End Time
                           </label>
                           <input
@@ -867,7 +888,7 @@ export default function VetSettings() {
                             value={schedule.end}
                             onChange={handleInputChange}
                             className="form-input"
-                            style={{ padding: '8px' }}
+                            style={{ padding: '8px', color: '#1F2937' }}
                           />
                         </div>
                       </div>

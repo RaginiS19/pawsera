@@ -459,7 +459,7 @@ export default function VetScheduling() {
                 alignItems: 'center',
                 marginBottom: '20px'
               }}>
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: '#1F2937' }}>
                   Schedule New Appointment
                 </h3>
                 <button
