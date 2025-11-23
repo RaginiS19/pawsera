@@ -1608,18 +1608,20 @@ body {
 /* ===== BOTTOM NAVIGATION STYLES ===== */
 
 .bottom-navigation {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--white);
-  border-top: 1px solid var(--border-light);
-  padding: 8px 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 1000;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background-color: var(--white) !important;
+  border-top: 1px solid var(--border-light) !important;
+  padding: 8px 0 !important;
+  display: flex !important;
+  justify-content: space-around !important;
+  align-items: center !important;
+  z-index: 1000 !important;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1) !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .nav-item {
