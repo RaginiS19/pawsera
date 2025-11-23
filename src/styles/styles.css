@@ -1526,6 +1526,10 @@ body {
   margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 1px solid #e5e7eb;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
 }
 
 .register-text {
@@ -1746,6 +1750,23 @@ body {
   box-sizing: border-box;
   flex: 1;
   min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure login page content is scrollable and register section is visible */
+.login-content {
+  min-height: auto !important;
+  height: auto !important;
+}
+
+.login-content .register-section {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  margin-top: 24px !important;
+  padding-top: 24px !important;
+  padding-bottom: 20px !important;
 }
 
 /* Add bottom padding to account for fixed navigation */

@@ -180,16 +180,19 @@ export default function OwnerLogin() {
   return (
     <div className="screen-container">
       <div className="mobile-phone-frame">
-        <div className="mobile-screen" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div className="mobile-screen" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', height: '100%', position: 'relative' }}>
           <div className="screen-content" style={{ 
             overflowY: 'auto', 
             overflowX: 'hidden', 
             flex: 1, 
             WebkitOverflowScrolling: 'touch',
-            paddingBottom: '20px'
+            paddingBottom: '40px',
+            minHeight: 0,
+            height: '100%',
+            maxHeight: '100%'
           }}>
-            <div className="login-container" style={{ minHeight: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 0' }}>
-              <div className="login-content" style={{ width: '100%', maxWidth: '420px' }}>
+            <div className="login-container" style={{ minHeight: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 16px 40px 16px' }}>
+              <div className="login-content" style={{ width: '100%', maxWidth: '420px', paddingBottom: '20px' }}>
         {/* Brand Section */}
         <div className="brand-section">
           <div className="logo-container">
@@ -200,8 +203,8 @@ export default function OwnerLogin() {
         </div>
 
         {/* Login Form */}
-        <div className="login-form">
-          <form onSubmit={handleSubmit} className="form-container">
+        <div className="login-form" style={{ width: '100%', display: 'block' }}>
+          <form onSubmit={handleSubmit} className="form-container" style={{ marginBottom: '0' }}>
                     <div className="form-header">
                       <h2 className="form-title">Sign In</h2>
                       <p className="form-subtitle">Enter your credentials to access your dashboard</p>
@@ -269,7 +272,12 @@ export default function OwnerLogin() {
             paddingBottom: '20px',
             borderTop: '1px solid #E5E7EB',
             textAlign: 'center',
-            width: '100%'
+            width: '100%',
+            display: 'block',
+            visibility: 'visible',
+            opacity: 1,
+            position: 'relative',
+            zIndex: 10
           }}>
             <p className="register-text" style={{ 
               fontSize: '15px', 
