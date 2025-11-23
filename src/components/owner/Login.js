@@ -202,14 +202,14 @@ export default function OwnerLogin() {
 
         {/* Login Form */}
         <div className="login-form" style={{ width: '100%', display: 'block' }}>
-          <form onSubmit={handleSubmit} className="form-container" style={{ marginBottom: '0' }}>
+          <form onSubmit={handleSubmit} className="form-container" style={{ marginBottom: '0', backgroundColor: 'transparent', boxShadow: 'none', padding: '0' }}>
                     <div className="form-header">
-                      <h2 className="form-title">Sign In</h2>
-                      <p className="form-subtitle">Enter your credentials to access your dashboard</p>
+                      <h2 className="form-title" style={{ color: '#000000' }}>Sign In</h2>
+                      <p className="form-subtitle" style={{ color: '#000000' }}>Enter your credentials to access your dashboard</p>
                     </div>
 
             <div className="form-group">
-              <label className="form-label">Email Address</label>
+              <label className="form-label" style={{ color: '#000000' }}>Email Address</label>
               <input
                 type="email"
                 className="form-input"
@@ -221,7 +221,7 @@ export default function OwnerLogin() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Password</label>
+              <label className="form-label" style={{ color: '#000000' }}>Password</label>
               <div className="password-container">
                 <input
                   type={showPassword ? 'text' : 'password'}
