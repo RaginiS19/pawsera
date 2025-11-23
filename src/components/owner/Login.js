@@ -283,7 +283,7 @@ export default function OwnerLogin() {
             }}>
               Don't have an account?{' '}
               <Link to="/signup" className="register-link" style={{ 
-                color: '#F7931E',
+                color: '#3b82f6',
                 textDecoration: 'none',
                 fontWeight: '500',
                 fontSize: '14px'
@@ -297,7 +297,7 @@ export default function OwnerLogin() {
               marginBottom: '0'
             }}>
               <Link to="/vet/signup" className="register-link" style={{ 
-                color: '#F7931E',
+                color: '#3b82f6',
                 textDecoration: 'none',
                 fontWeight: '500',
                 fontSize: '14px'
@@ -306,7 +306,7 @@ export default function OwnerLogin() {
               </Link>
               {' • '}
               <Link to="/admin/signup" className="register-link" style={{ 
-                color: '#F7931E',
+                color: '#3b82f6',
                 textDecoration: 'none',
                 fontWeight: '500',
                 fontSize: '14px'
