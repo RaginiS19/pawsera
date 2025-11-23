@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser, findUserByEmail } from '../../api/authService';
 import { auth, db } from '../../api/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export default function OwnerLogin() {
   const [email, setEmail] = useState('');
@@ -180,10 +180,16 @@ export default function OwnerLogin() {
   return (
     <div className="screen-container">
       <div className="mobile-phone-frame">
-        <div className="mobile-screen">
-          <div className="screen-content">
-            <div className="login-container">
-              <div className="login-content">
+        <div className="mobile-screen" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div className="screen-content" style={{ 
+            overflowY: 'auto', 
+            overflowX: 'hidden', 
+            flex: 1, 
+            WebkitOverflowScrolling: 'touch',
+            paddingBottom: '20px'
+          }}>
+            <div className="login-container" style={{ minHeight: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 0' }}>
+              <div className="login-content" style={{ width: '100%', maxWidth: '420px' }}>
         {/* Brand Section */}
         <div className="brand-section">
           <div className="logo-container">
@@ -260,8 +266,10 @@ export default function OwnerLogin() {
           <div className="register-section" style={{ 
             marginTop: '24px', 
             paddingTop: '24px', 
+            paddingBottom: '20px',
             borderTop: '1px solid #E5E7EB',
-            textAlign: 'center'
+            textAlign: 'center',
+            width: '100%'
           }}>
             <p className="register-text" style={{ 
               fontSize: '15px', 
