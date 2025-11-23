@@ -10,11 +10,13 @@ import NearbyVets from './components/owner/NearbyVets';
 import Settings from './components/owner/Settings';
 
 // Vet
+import VetSignup from './components/vet/VetSignup';
 import VetDashboard from './components/vet/VetDashboard';
 import VetScheduling from './components/vet/VetScheduling';
 import VetSettings from './components/vet/VetSettings';
 
 // Admin
+import AdminSignup from './components/admin/AdminSignup';
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminAppointments from './components/admin/AdminAppointments';
 import AdminUsers from './components/admin/AdminUsers';
@@ -33,10 +35,12 @@ export default function App(){
             <Route path='/nearbyvets' element={<NearbyVets />} />
             <Route path='/settings' element={<Settings />} />
 
+        <Route path='/vet/signup' element={<VetSignup />} />
         <Route path='/vet/dashboard' element={<VetDashboard />} />
         <Route path='/vet/scheduling' element={<VetScheduling />} />
         <Route path='/vet/settings' element={<VetSettings />} />
 
+            <Route path='/admin/signup' element={<AdminSignup />} />
             <Route path='/admin/dashboard' element={<AdminDashboard />} />
             <Route path='/admin/appointments' element={<AdminAppointments />} />
             <Route path='/admin/users' element={<AdminUsers />} />

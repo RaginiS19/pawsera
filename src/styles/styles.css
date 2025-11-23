@@ -1709,7 +1709,7 @@ body {
   height: 100%;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 32px;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1734,7 +1734,6 @@ body {
 
 .screen-content {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   background-color: transparent;
@@ -1746,6 +1745,7 @@ body {
   max-width: 100%;
   box-sizing: border-box;
   flex: 1;
+  min-height: 0;
 }
 
 /* Add bottom padding to account for fixed navigation */
@@ -1852,6 +1852,15 @@ body {
   .screen-content.with-bottom-nav {
     padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
   }
+}
+
+/* ===== SIGNUP FORM OVERRIDES ===== */
+.login-container.signup-form {
+  min-height: auto !important;
+  height: auto !important;
+  align-items: flex-start !important;
+  overflow: visible !important;
+  background: linear-gradient(135deg, #F7931E 0%, #FFA64D 50%, #FFB366 100%) !important;
 }
 
 /* ===== USER MANAGEMENT STYLES ===== */

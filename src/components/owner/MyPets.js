@@ -26,6 +26,8 @@ export default function MyPets() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const user = auth?.currentUser || null;
 
@@ -37,21 +39,72 @@ export default function MyPets() {
     loadPets();
   }, [navigate, user]);
 
+  // Helper functions for localStorage
+  const savePetsToLocalStorage = (petsToSave) => {
+    try {
+      const userId = user?.uid || 'default';
+      localStorage.setItem(`pawsera_pets_${userId}`, JSON.stringify(petsToSave));
+      console.log('✅ Pets saved to localStorage');
+    } catch (err) {
+      console.warn('Could not save pets to localStorage:', err);
+    }
+  };
+
+  const loadPetsFromLocalStorage = () => {
+    try {
+      const userId = user?.uid || 'default';
+      const saved = localStorage.getItem(`pawsera_pets_${userId}`);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (err) {
+      console.warn('Could not load pets from localStorage:', err);
+    }
+    return [];
+  };
+
   const loadPets = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      // Try to fetch pets with proper error handling
-      const petsSnap = await getDocs(collection(db, 'pets'));
-      const userPets = petsSnap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(p => p.ownerID === user.uid);
-      setPets(userPets);
+      // Load from localStorage first
+      const localPets = loadPetsFromLocalStorage();
+      
+      if (db) {
+        // Try to fetch pets with proper error handling
+        const petsSnap = await getDocs(collection(db, 'pets'));
+        const userPets = petsSnap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(p => p.ownerID === user.uid);
+        
+        // Merge Firebase pets with localStorage pets
+        const localPetsNotInFirebase = localPets.filter(localPet => 
+          !userPets.some(fbPet => fbPet.id === localPet.id || 
+            (fbPet.name === localPet.name && fbPet.breed === localPet.breed))
+        );
+        
+        const allPets = [...userPets, ...localPetsNotInFirebase];
+        setPets(allPets);
+        savePetsToLocalStorage(allPets);
+      } else {
+        // No Firebase, use localStorage
+        if (localPets.length > 0) {
+          setPets(localPets);
+        } else {
+          // Fallback to dummy data
+          setPets(getDummyPets());
+        }
+      }
     } catch (err) {
-      console.warn('Could not fetch pets, using dummy data:', err.message);
-      // Use dummy data as fallback
-      setPets(getDummyPets());
+      console.warn('Could not fetch pets:', err.message);
+      // Try localStorage as fallback
+      const localPets = loadPetsFromLocalStorage();
+      if (localPets.length > 0) {
+        setPets(localPets);
+      } else if (pets.length === 0) {
+        setPets(getDummyPets());
+      }
     } finally {
       setLoading(false);
     }
@@ -74,42 +127,176 @@ export default function MyPets() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Form submitted!');
+    console.log('Form data:', formData);
+    
+    // Validate required fields
+    if (!formData.name || !formData.breed || !formData.age) {
+      const missingFields = [];
+      if (!formData.name) missingFields.push('Name');
+      if (!formData.breed) missingFields.push('Breed');
+      if (!formData.age) missingFields.push('Age');
+      setError(`Please fill in all required fields: ${missingFields.join(', ')}`);
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    setSuccessMessage(null);
+    
     try {
-      setError(null);
+      console.log('Starting pet save process...');
+      console.log('Form data:', formData);
+      console.log('User:', user?.uid);
+      console.log('DB available:', !!db);
       
       let imageUrl = null;
+      
+      // Try to upload image with timeout, but don't block pet save if it fails
       if (imageFile) {
-        imageUrl = await uploadFile(imageFile, 'pet-images');
+        try {
+          console.log('Attempting to upload pet image...');
+          const uploadPromise = uploadFile(imageFile, 'pet-images');
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Image upload timeout')), 5000)
+          );
+          imageUrl = await Promise.race([uploadPromise, timeoutPromise]);
+          console.log('✅ Image uploaded successfully:', imageUrl);
+        } catch (uploadErr) {
+          console.warn('⚠️ Image upload failed, saving pet without image:', uploadErr.message);
+          // Create local URL as fallback
+          imageUrl = imagePreview || null;
+          // Don't throw error - allow pet to be saved without image
+        }
+      } else if (editingPet && editingPet.imageUrl) {
+        // Keep existing image URL when editing
+        imageUrl = editingPet.imageUrl;
       }
 
       const petData = {
         ...formData,
-        ownerID: user.uid,
-        imageUrl,
-        createdAt: new Date().toISOString(),
+        ownerID: user?.uid || 'unknown',
+        imageUrl: imageUrl || null,
+        createdAt: editingPet ? editingPet.createdAt : new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
 
-      if (editingPet) {
-        await updateDoc(doc(db, 'pets', editingPet.id), {
-          ...petData,
-          updatedAt: new Date().toISOString()
-        });
-        setEditingPet(null);
+      console.log('Pet data to save:', petData);
+
+      let saveSuccess = false;
+      let savedToFirebase = false;
+      
+      // Try to save to Firestore
+      if (db) {
+        if (editingPet) {
+          try {
+            console.log('Updating pet in Firestore...');
+            await updateDoc(doc(db, 'pets', editingPet.id), {
+              ...petData,
+              updatedAt: new Date().toISOString()
+            });
+            console.log('✅ Pet updated in Firestore');
+            saveSuccess = true;
+            savedToFirebase = true;
+            setSuccessMessage('Pet updated successfully!');
+          } catch (firestoreErr) {
+            console.warn('Firestore update failed:', firestoreErr.message);
+            console.error('Full error:', firestoreErr);
+            // Fallback: update local state
+            const updatedPets = pets.map(p => 
+              p.id === editingPet.id ? { ...p, ...petData } : p
+            );
+            setPets(updatedPets);
+            saveSuccess = true;
+            savedToFirebase = false;
+            setSuccessMessage('Pet updated (saved locally)!');
+          }
+        } else {
+          try {
+            console.log('Adding pet to Firestore...');
+            const docRef = await addDoc(collection(db, 'pets'), petData);
+            console.log('✅ Pet added to Firestore with ID:', docRef.id);
+            saveSuccess = true;
+            savedToFirebase = true;
+            setSuccessMessage('Pet added successfully!');
+          } catch (firestoreErr) {
+            console.warn('Firestore add failed:', firestoreErr.message);
+            console.error('Full error:', firestoreErr);
+            // Fallback: add to local state
+            const newPet = {
+              id: `local_${Date.now()}`,
+              ...petData
+            };
+            const updatedPets = [...pets, newPet];
+            setPets(updatedPets);
+            savePetsToLocalStorage(updatedPets);
+            console.log('✅ Pet added to local state. Total pets:', updatedPets.length);
+            saveSuccess = true;
+            savedToFirebase = false;
+            setSuccessMessage('Pet added (saved locally)!');
+          }
+        }
       } else {
-        await addDoc(collection(db, 'pets'), petData);
+        // Firebase not available, save to local state only
+        console.warn('Firebase not available, saving to local state');
+        if (editingPet) {
+          const updatedPets = pets.map(p => 
+            p.id === editingPet.id ? { ...p, ...petData } : p
+          );
+          setPets(updatedPets);
+          savePetsToLocalStorage(updatedPets);
+          saveSuccess = true;
+          savedToFirebase = false;
+          setSuccessMessage('Pet updated (saved locally)!');
+        } else {
+          const newPet = {
+            id: `local_${Date.now()}`,
+            ...petData
+          };
+          const updatedPets = [...pets, newPet];
+          setPets(updatedPets);
+          savePetsToLocalStorage(updatedPets);
+          console.log('✅ Pet added to local state (no Firebase). Total pets:', updatedPets.length);
+          saveSuccess = true;
+          savedToFirebase = false;
+          setSuccessMessage('Pet added (saved locally)!');
+        }
       }
 
-      resetForm();
-      await loadPets();
-    } catch (err) {
-      console.warn('Could not save pet:', err.message);
-      // If permissions error, show user-friendly message
-      if (err.message.includes('permission') || err.message.includes('insufficient')) {
-        setError('Unable to save pet. Please check your connection and try again.');
-      } else {
-        setError(err.message || 'Failed to save pet');
+      if (saveSuccess) {
+        // Only reload if we successfully saved to Firebase
+        // If saved locally, state is already updated, don't reload (it would overwrite local state)
+        if (savedToFirebase) {
+          // For Firebase saves, wait a moment for sync, then reload
+          setTimeout(async () => {
+            try {
+              await loadPets();
+            } catch (loadErr) {
+              console.warn('Could not reload pets:', loadErr.message);
+              // Keep the local state we just set
+            }
+          }, 500);
+        } else {
+          // Saved locally - state is already updated and saved to localStorage
+          console.log('Pet saved locally, state already updated. Not reloading.');
+        }
+        
+        // Wait a bit before closing modal to show success message
+        setTimeout(() => {
+          resetForm();
+          // Clear success message after 3 seconds
+          setTimeout(() => setSuccessMessage(null), 3000);
+        }, 1000);
       }
+      
+    } catch (err) {
+      console.error('Error saving pet:', err);
+      setError(err.message || 'Failed to save pet. Please try again.');
+      setSaving(false);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -134,13 +321,23 @@ export default function MyPets() {
     if (!window.confirm('Are you sure you want to delete this pet?')) return;
     
     try {
-      await deleteDoc(doc(db, 'pets', petId));
+      if (db && !petId.startsWith('local_')) {
+        await deleteDoc(doc(db, 'pets', petId));
+      }
+      // Remove from local state and localStorage
+      const updatedPets = pets.filter(p => p.id !== petId);
+      setPets(updatedPets);
+      savePetsToLocalStorage(updatedPets);
       await loadPets();
     } catch (err) {
       console.warn('Could not delete pet:', err.message);
+      // Remove from local state anyway
+      const updatedPets = pets.filter(p => p.id !== petId);
+      setPets(updatedPets);
+      savePetsToLocalStorage(updatedPets);
       // If permissions error, show user-friendly message
       if (err.message.includes('permission') || err.message.includes('insufficient')) {
-        setError('Unable to delete pet. Please check your connection and try again.');
+        setError('Unable to delete pet from server, but removed locally.');
       } else {
         setError(err.message || 'Failed to delete pet');
       }
@@ -162,6 +359,8 @@ export default function MyPets() {
     setImagePreview(null);
     setShowAddForm(false);
     setEditingPet(null);
+    setError(null);
+    setSaving(false);
   };
 
   const handleLogout = async () => {
@@ -207,108 +406,209 @@ export default function MyPets() {
         </div>
 
 
-        {!showAddForm ? (
-          <>
-            <div className="pets-list">
-              {pets.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon">🐾</div>
-                  <div className="empty-title">No pets yet</div>
-                  <p className="empty-description">Add your first pet to get started with personalized care.</p>
-                  <button 
-                    className="primary-button" 
-                    onClick={() => setShowAddForm(true)}
+        {error && (
+          <div style={{ 
+            margin: '16px', 
+            padding: '12px', 
+            backgroundColor: '#FEE2E2', 
+            border: '1px solid #FCA5A5', 
+            borderRadius: '8px',
+            color: '#991B1B',
+            fontSize: '14px'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div style={{ 
+            margin: '16px', 
+            padding: '12px', 
+            backgroundColor: '#D1FAE5', 
+            border: '1px solid #6EE7B7', 
+            borderRadius: '8px',
+            color: '#065F46',
+            fontSize: '14px'
+          }}>
+            {successMessage}
+          </div>
+        )}
+
+        <div className="pets-list">
+          {pets.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">🐾</div>
+              <div className="empty-title">No pets yet</div>
+              <p className="empty-description">Add your first pet to get started with personalized care.</p>
+              <button 
+                className="primary-button" 
+                onClick={() => setShowAddForm(true)}
+              >
+                Add Your First Pet
+              </button>
+            </div>
+          ) : (
+            pets.map(pet => (
+              <div key={pet.id} className="pet-card">
+                <div className="pet-image">
+                  <div className="pet-avatar">
+                    {pet.imageUrl ? (
+                      <img 
+                        src={pet.imageUrl} 
+                        alt={pet.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: '24px' }}>🐾</span>
+                    )}
+                  </div>
+                </div>
+                <div className="pet-info">
+                  <div className="pet-name">{pet.name}</div>
+                  <p className="pet-details">{pet.breed} • {pet.age}</p>
+                  <p className="pet-age">{pet.type} • {pet.gender}</p>
+                </div>
+                <div className="pet-actions">
+                  <Link 
+                    to={`/pet-records/${pet.id}`}
+                    className="action-button primary"
+                    style={{ textDecoration: 'none', textAlign: 'center' }}
                   >
-                    Add Your First Pet
+                    Records
+                  </Link>
+                  <button 
+                    className="action-button"
+                    onClick={() => handleEdit(pet)}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="action-button secondary"
+                    onClick={() => handleDelete(pet.id)}
+                  >
+                    Delete
                   </button>
                 </div>
-              ) : (
-                pets.map(pet => (
-                  <div key={pet.id} className="pet-card">
-                    <div className="pet-image">
-                      <div className="pet-avatar">
-                        {pet.imageUrl ? (
-                          <img 
-                            src={pet.imageUrl} 
-                            alt={pet.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
-                          />
-                        ) : (
-                          <span style={{ fontSize: '24px' }}>🐾</span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="pet-info">
-                      <div className="pet-name">{pet.name}</div>
-                      <p className="pet-details">{pet.breed} • {pet.age}</p>
-                      <p className="pet-age">{pet.type} • {pet.gender}</p>
-                    </div>
-                    <div className="pet-actions">
-                      <Link 
-                        to={`/pet-records/${pet.id}`}
-                        className="action-button primary"
-                        style={{ textDecoration: 'none', textAlign: 'center' }}
-                      >
-                        Records
-                      </Link>
-                      <button 
-                        className="action-button"
-                        onClick={() => handleEdit(pet)}
-                      >
-                        Edit
-                      </button>
-                      <button 
-                        className="action-button secondary"
-                        onClick={() => handleDelete(pet.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+              </div>
+            ))
+          )}
+        </div>
 
-            {pets.length > 0 && (
-              <div style={{ padding: '16px' }}>
-                <button 
-                  className="primary-button" 
-                  onClick={() => setShowAddForm(true)}
-                  style={{ width: '100%' }}
+        {pets.length > 0 && (
+          <div style={{ padding: '16px' }}>
+            <button 
+              className="primary-button" 
+              onClick={() => setShowAddForm(true)}
+              style={{ width: '100%' }}
+            >
+              + Add New Pet
+            </button>
+          </div>
+        )}
+
+        {/* Add/Edit Pet Modal */}
+        {showAddForm && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '10px',
+            overflowY: 'auto',
+            boxSizing: 'border-box',
+            borderRadius: '32px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              resetForm();
+            }
+          }}
+          >
+            <div style={{
+              backgroundColor: '#374151',
+              borderRadius: '12px',
+              padding: '14px',
+              width: '100%',
+              maxWidth: '355px',
+              maxHeight: 'calc(100% - 20px)',
+              overflowY: 'auto',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+              boxSizing: 'border-box',
+              position: 'relative',
+              WebkitOverflowScrolling: 'touch',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+            onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                marginBottom: '10px',
+                paddingBottom: '8px',
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                flexShrink: 0
+              }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold', color: '#FFFFFF' }}>
+                  {editingPet ? 'Edit Pet' : 'Add New Pet'}
+                </h3>
+                <button
+                  onClick={resetForm}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '24px',
+                    cursor: 'pointer',
+                    color: '#FFFFFF',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.1)'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
-                  + Add New Pet
+                  ×
                 </button>
               </div>
-            )}
-          </>
-        ) : (
-          <div style={{ padding: '16px' }}>
-            <div className="form-container">
-              <div className="form-header">
-                <h2 className="form-title">
-                  {editingPet ? 'Edit Pet' : 'Add New Pet'}
-                </h2>
-                <p className="form-subtitle">
-                  {editingPet ? 'Update your pet\'s information' : 'Tell us about your furry friend'}
-                </p>
-              </div>
 
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label className="form-label">Pet Photo</label>
-                  <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+              {error && (
+                <div style={{ 
+                  marginBottom: '12px', 
+                  padding: '10px', 
+                  backgroundColor: '#7F1D1D', 
+                  border: '1px solid #991B1B', 
+                  borderRadius: '6px',
+                  color: '#FCA5A5',
+                  fontSize: '12px',
+                  flexShrink: 0
+                }}>
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
+                  <div className="form-group" style={{ marginBottom: '12px', textAlign: 'center' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '13px' }}>Pet Photo</label>
                     <div 
                       style={{ 
-                        width: '100px', 
-                        height: '100px', 
+                        width: '80px', 
+                        height: '80px', 
                         borderRadius: '50%', 
-                        backgroundColor: '#f0f0f0',
-                        margin: '0 auto 16px',
+                        backgroundColor: '#1F2937',
+                        margin: '0 auto 8px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         overflow: 'hidden',
-                        border: '2px dashed #ccc'
+                        border: '2px dashed #6B7280'
                       }}
                     >
                       {imagePreview ? (
@@ -318,7 +618,7 @@ export default function MyPets() {
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       ) : (
-                        <span style={{ fontSize: '24px' }}>📷</span>
+                        <span style={{ fontSize: '20px' }}>📷</span>
                       )}
                     </div>
                     <input
@@ -330,141 +630,246 @@ export default function MyPets() {
                     />
                     <label 
                       htmlFor="image-upload" 
-                      className="action-button"
-                      style={{ cursor: 'pointer' }}
+                      style={{
+                        display: 'inline-block',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: '500'
+                      }}
                     >
                       {imagePreview ? 'Change Photo' : 'Upload Photo'}
                     </label>
                   </div>
+
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '5px', fontWeight: '500', fontSize: '13px' }}>Pet's Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Buddy"
+                      required
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '5px', fontWeight: '500', fontSize: '13px' }}>Breed</label>
+                    <input
+                      type="text"
+                      name="breed"
+                      value={formData.breed}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Golden Retriever"
+                      required
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '5px', fontWeight: '500', fontSize: '13px' }}>Age</label>
+                    <input
+                      type="text"
+                      name="age"
+                      value={formData.age}
+                      onChange={handleInputChange}
+                      placeholder="e.g. 2 years"
+                      required
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '5px', fontWeight: '500', fontSize: '13px' }}>Type of Pet</label>
+                    <select
+                      name="type"
+                      value={formData.type}
+                      onChange={handleInputChange}
+                      required
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <option value="Dog">Dog</option>
+                      <option value="Cat">Cat</option>
+                      <option value="Bird">Bird</option>
+                      <option value="Fish">Fish</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '5px', fontWeight: '500', fontSize: '13px' }}>Gender</label>
+                    <select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                      required
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '5px', fontWeight: '500', fontSize: '13px' }}>Weight (optional)</label>
+                    <input
+                      type="text"
+                      name="weight"
+                      value={formData.weight}
+                      onChange={handleInputChange}
+                      placeholder="e.g. 25 lbs"
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '5px', fontWeight: '500', fontSize: '13px' }}>Color (optional)</label>
+                    <input
+                      type="text"
+                      name="color"
+                      value={formData.color}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Golden"
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label className="form-label" style={{ color: '#FFFFFF', display: 'block', marginBottom: '5px', fontWeight: '500', fontSize: '13px' }}>Notes (optional)</label>
+                    <textarea
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleInputChange}
+                      placeholder="Any additional notes about your pet..."
+                      rows="3"
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #6B7280',
+                        backgroundColor: '#1F2937',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        resize: 'vertical',
+                        fontFamily: 'inherit',
+                        minHeight: '60px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Pet's Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    className="form-input"
-                    placeholder="e.g. Buddy"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Breed</label>
-                  <input
-                    type="text"
-                    name="breed"
-                    className="form-input"
-                    placeholder="e.g. Golden Retriever"
-                    value={formData.breed}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Age</label>
-                  <input
-                    type="text"
-                    name="age"
-                    className="form-input"
-                    placeholder="e.g. 2 years"
-                    value={formData.age}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Type of Pet</label>
-                  <select
-                    name="type"
-                    className="form-input"
-                    value={formData.type}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="Dog">Dog</option>
-                    <option value="Cat">Cat</option>
-                    <option value="Bird">Bird</option>
-                    <option value="Fish">Fish</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Gender</label>
-                  <select
-                    name="gender"
-                    className="form-input"
-                    value={formData.gender}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Weight (optional)</label>
-                  <input
-                    type="text"
-                    name="weight"
-                    className="form-input"
-                    placeholder="e.g. 25 lbs"
-                    value={formData.weight}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Color (optional)</label>
-                  <input
-                    type="text"
-                    name="color"
-                    className="form-input"
-                    placeholder="e.g. Golden"
-                    value={formData.color}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Notes (optional)</label>
-                  <textarea
-                    name="notes"
-                    className="form-input"
-                    placeholder="Any additional notes about your pet..."
-                    value={formData.notes}
-                    onChange={handleInputChange}
-                    rows="3"
-                    style={{ resize: 'vertical' }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexShrink: 0 }}>
                   <button
                     type="button"
-                    className="btn"
                     onClick={resetForm}
-                    style={{ 
-                      flex: 1, 
-                      backgroundColor: '#f0f0f0', 
-                      color: '#333',
-                      border: '1px solid #ccc'
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      borderRadius: '6px',
+                      border: '1px solid #6B7280',
+                      backgroundColor: '#6B7280',
+                      color: '#FFFFFF',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      fontSize: '13px'
                     }}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="btn btn-primary"
-                    style={{ flex: 1 }}
+                    disabled={saving}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      backgroundColor: saving ? '#9CA3AF' : '#F7931E',
+                      color: '#FFFFFF',
+                      cursor: saving ? 'not-allowed' : 'pointer',
+                      fontWeight: '600',
+                      fontSize: '13px',
+                      transition: 'background 0.2s',
+                      opacity: saving ? 0.7 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!saving) e.target.style.backgroundColor = '#E67E22';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!saving) e.target.style.backgroundColor = '#F7931E';
+                    }}
                   >
-                    {editingPet ? 'Update Pet' : 'Save Pet'}
+                    {saving ? 'Saving...' : (editingPet ? 'Update Pet' : 'Save Pet')}
                   </button>
                 </div>
               </form>

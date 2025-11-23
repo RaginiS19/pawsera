@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../api/firebase';
-import { collection, doc, getDocs, getDoc, updateDoc } from 'firebase/firestore';
-import { logoutUser } from '../../api/authService';
+import { collection, doc, getDocs, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { logoutUser, findUserByEmail } from '../../api/authService';
 import BottomNavigation from '../common/BottomNavigation';
 
 export default function AdminSettings() {
@@ -13,6 +13,7 @@ export default function AdminSettings() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,26 +45,68 @@ export default function AdminSettings() {
       setLoading(true);
       setError(null);
       
-      const [userDoc, appointmentsSnap, petsSnap, usersSnap] = await Promise.all([
-        getDoc(doc(db, 'users', user.uid)),
+      // Try multiple methods to find user data (same as Login.js)
+      let userData = null;
+      if (db) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            userData = { id: userDoc.id, ...userDoc.data() };
+            console.log('✅ Found admin user data by UID');
+          }
+        } catch (uidError) {
+          console.warn('Could not get admin user by UID:', uidError);
+        }
+        
+        // If UID lookup failed, try by email query
+        if (!userData && user.email) {
+          try {
+            const emailUserData = await findUserByEmail(user.email);
+            if (emailUserData) {
+              userData = emailUserData;
+              console.log('✅ Found admin user data by email query');
+            }
+          } catch (emailError) {
+            console.warn('Could not get admin user by email query:', emailError);
+          }
+        }
+        
+        // If still not found, try by email as document ID
+        if (!userData && user.email) {
+          try {
+            const emailDoc = await getDoc(doc(db, 'users', user.email));
+            if (emailDoc.exists()) {
+              userData = { id: emailDoc.id, ...emailDoc.data() };
+              console.log('✅ Found admin user data by email as document ID');
+            }
+          } catch (emailDocError) {
+            console.warn('Could not get admin user by email as document ID:', emailDocError);
+          }
+        }
+      }
+      
+      // If still not found, use defaults
+      if (!userData) {
+        userData = {
+          name: user.displayName || user.email?.split('@')[0] || 'Admin',
+          email: user.email || '',
+          phone: '',
+          address: '',
+          notifications: {
+            systemAlerts: true,
+            userRegistrations: true,
+            vetApprovals: true,
+            appointmentUpdates: true,
+            systemReports: false
+          }
+        };
+      }
+      
+      const [appointmentsSnap, petsSnap, usersSnap] = await Promise.all([
         getDocs(collection(db, 'appointments')),
         getDocs(collection(db, 'pets')),
         getDocs(collection(db, 'users'))
       ]);
-
-      const userData = userDoc.exists() ? userDoc.data() : {
-        name: user.displayName || user.email?.split('@')[0] || 'Admin',
-        email: user.email,
-        phone: '',
-        address: '',
-        notifications: {
-          systemAlerts: true,
-          userRegistrations: true,
-          vetApprovals: true,
-          appointmentUpdates: true,
-          systemReports: false
-        }
-      };
 
       const allAppointments = appointmentsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       const allPets = petsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -114,11 +157,47 @@ export default function AdminSettings() {
     e.preventDefault();
     try {
       setError(null);
-      await updateDoc(doc(db, 'users', user.uid), {
+      const updateData = {
         ...formData,
         updatedAt: new Date().toISOString()
-      });
+      };
+      
+      // Try to save to Firestore (with both UID and email as document ID for redundancy)
+      if (db) {
+        try {
+          // Try with UID first
+          try {
+            await updateDoc(doc(db, 'users', user.uid), updateData);
+            console.log('✅ Admin profile updated in Firestore with UID');
+          } catch (uidErr) {
+            // If update fails, try setDoc with merge
+            try {
+              await setDoc(doc(db, 'users', user.uid), updateData, { merge: true });
+              console.log('✅ Admin profile saved in Firestore with UID (setDoc)');
+            } catch (setDocErr) {
+              console.warn('Could not save admin profile with UID:', setDocErr);
+            }
+          }
+          
+          // Also try with email as document ID (for redundancy)
+          if (user.email) {
+            try {
+              await setDoc(doc(db, 'users', user.email), updateData, { merge: true });
+              console.log('✅ Admin profile also saved with email as document ID');
+            } catch (emailErr) {
+              console.warn('Could not save admin profile with email as document ID:', emailErr);
+            }
+          }
+        } catch (firestoreErr) {
+          console.warn('Could not update admin profile in Firestore:', firestoreErr);
+        }
+      }
+      
+      // Update local state
+      setProfile(updateData);
       setShowProfileForm(false);
+      setSuccessMessage('Profile updated successfully!');
+      setTimeout(() => setSuccessMessage(null), 3000);
       await loadData();
     } catch (err) {
       setError(err.message || 'Failed to update profile');
@@ -213,6 +292,42 @@ export default function AdminSettings() {
                 <h1 className="page-title">Settings & Analytics</h1>
                 <button className="logout-button" onClick={handleLogout}>Logout</button>
               </div>
+
+              {error && (
+                <div style={{ 
+                  margin: '16px', 
+                  padding: '12px', 
+                  backgroundColor: '#FEE2E2', 
+                  border: '1px solid #FCA5A5', 
+                  borderRadius: '8px',
+                  color: '#991B1B',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>⚠️</span>
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {successMessage && (
+                <div style={{ 
+                  margin: '16px', 
+                  padding: '12px', 
+                  backgroundColor: '#D1FAE5', 
+                  border: '1px solid #6EE7B7', 
+                  borderRadius: '8px',
+                  color: '#065F46',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>✅</span>
+                  <span>{successMessage}</span>
+                </div>
+              )}
               <div style={{ padding: 20, textAlign: 'center' }}>
                 <p>Loading settings...</p>
               </div>

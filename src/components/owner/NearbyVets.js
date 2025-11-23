@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../api/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { fetchNearbyVets } from '../../api/mapsService';
 import { logoutUser } from '../../api/authService';
+import { getDummyApprovedVets } from '../../api/dummyData';
 import BottomNavigation from '../common/BottomNavigation';
 
 export default function NearbyVets() {
@@ -11,11 +11,7 @@ export default function NearbyVets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
-  const [coords, setCoords] = useState(null); // {lat, lng}
-  const [places, setPlaces] = useState([]);
-  const mapRef = useRef(null);
-  const mapInstanceRef = useRef(null);
-  const markersRef = useRef([]);
+  const [vets, setVets] = useState([]);
 
   const user = auth?.currentUser || null;
 
@@ -29,30 +25,55 @@ export default function NearbyVets() {
       setError(null);
 
       try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        const userData = userDoc.exists() ? userDoc.data() : {};
-        const fallbackCity = userData.city || 'Toronto';
-
-        const position = await getCurrentPositionSafe(6000);
-        let center = position || (await geocodeCity(fallbackCity));
-        if (!center) {
-          throw new Error('Unable to determine location');
+        // Try to load vets from Firestore
+        if (db) {
+          try {
+            const vetsSnap = await getDoc(doc(db, 'vets', 'all'));
+            if (vetsSnap.exists()) {
+              const vetsData = vetsSnap.data();
+              const vetList = Array.isArray(vetsData.vets) ? vetsData.vets : [];
+              if (vetList.length > 0) {
+                setVets(vetList);
+                setLoading(false);
+                return;
+              }
+            }
+          } catch (firestoreErr) {
+            console.warn('Could not load vets from Firestore:', firestoreErr);
+          }
         }
-        setCoords(center);
 
-        const results = await fetchNearbyVets(center.lat, center.lng);
-        const normalized = (results.results || []).map(r => ({
-          id: r.place_id || `${r.name}-${r.vicinity}`,
-          name: r.name,
-          address: r.vicinity || r.formatted_address,
-          rating: r.rating,
-          userRatingsTotal: r.user_ratings_total,
-          openNow: r.opening_hours?.open_now,
-          location: r.geometry?.location ? { lat: r.geometry.location.lat, lng: r.geometry.location.lng } : null,
+        // Fallback to dummy data
+        const dummyVets = getDummyApprovedVets();
+        const formattedVets = dummyVets.map(vet => ({
+          id: vet.id,
+          name: vet.name,
+          clinic: vet.clinic || vet.name,
+          specialization: vet.specialization || 'General Practice',
+          phone: vet.phone || 'N/A',
+          rating: vet.rating || 4.5,
+          experience: vet.experience || 'N/A',
+          address: `${vet.clinic || 'Veterinary Clinic'}, Toronto, ON`,
+          openNow: Math.random() > 0.3, // Random open/closed status
         }));
-        setPlaces(normalized);
+        setVets(formattedVets);
       } catch (err) {
-        setError(err.message || 'Failed to load nearby vets');
+        console.error('Error loading vets:', err);
+        setError('Unable to load veterinarians. Please try again later.');
+        // Still show dummy data
+        const dummyVets = getDummyApprovedVets();
+        const formattedVets = dummyVets.map(vet => ({
+          id: vet.id,
+          name: vet.name,
+          clinic: vet.clinic || vet.name,
+          specialization: vet.specialization || 'General Practice',
+          phone: vet.phone || 'N/A',
+          rating: vet.rating || 4.5,
+          experience: vet.experience || 'N/A',
+          address: `${vet.clinic || 'Veterinary Clinic'}, Toronto, ON`,
+          openNow: Math.random() > 0.3,
+        }));
+        setVets(formattedVets);
       } finally {
         setLoading(false);
       }
@@ -62,87 +83,14 @@ export default function NearbyVets() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return places;
-    return places.filter(p =>
-      (p.name || '').toLowerCase().includes(q) ||
-      (p.address || '').toLowerCase().includes(q)
+    if (!q) return vets;
+    return vets.filter(v =>
+      (v.name || '').toLowerCase().includes(q) ||
+      (v.clinic || '').toLowerCase().includes(q) ||
+      (v.specialization || '').toLowerCase().includes(q) ||
+      (v.address || '').toLowerCase().includes(q)
     );
-  }, [places, query]);
-
-  // Load Google Maps JS API and draw map + markers
-  useEffect(() => {
-    if (!coords) return;
-    let cancelled = false;
-
-    (async () => {
-      const g = await loadGoogleMaps(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
-      if (cancelled || !g) return;
-
-      // Initialize map once
-      if (!mapInstanceRef.current && mapRef.current) {
-        mapInstanceRef.current = new g.maps.Map(mapRef.current, {
-          center: { lat: coords.lat, lng: coords.lng },
-          zoom: 13,
-          disableDefaultUI: true,
-          zoomControl: true,
-        });
-      }
-
-      // Center map when coords change
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.setCenter({ lat: coords.lat, lng: coords.lng });
-      }
-
-      // Clear existing markers
-      markersRef.current.forEach(m => m.setMap(null));
-      markersRef.current = [];
-
-      // Add a marker for user location
-      if (mapInstanceRef.current) {
-        const userMarker = new g.maps.Marker({
-          position: { lat: coords.lat, lng: coords.lng },
-          map: mapInstanceRef.current,
-          title: 'You are here',
-          icon: {
-            path: g.maps.SymbolPath.CIRCLE,
-            scale: 6,
-            fillColor: '#1d4ed8',
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: '#ffffff',
-          },
-        });
-        markersRef.current.push(userMarker);
-      }
-
-      // Add vet markers
-      const bounds = new g.maps.LatLngBounds();
-      bounds.extend(new g.maps.LatLng(coords.lat, coords.lng));
-      const info = new g.maps.InfoWindow();
-      places.forEach(p => {
-        if (!p.location || !mapInstanceRef.current) return;
-        const marker = new g.maps.Marker({
-          position: { lat: p.location.lat, lng: p.location.lng },
-          map: mapInstanceRef.current,
-          title: p.name,
-        });
-        marker.addListener('click', () => {
-          info.setContent(`<div style="max-width:220px"><strong>${escapeHtml(p.name)}</strong><br/>${escapeHtml(p.address || '')}<br/>${p.rating ? `⭐ ${p.rating}` : ''}</div>`);
-          info.open({ anchor: marker, map: mapInstanceRef.current });
-        });
-        markersRef.current.push(marker);
-        bounds.extend(new g.maps.LatLng(p.location.lat, p.location.lng));
-      });
-
-      if (!bounds.isEmpty() && mapInstanceRef.current) {
-        mapInstanceRef.current.fitBounds(bounds);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [coords, places]);
+  }, [vets, query]);
 
   const handleLogout = async () => {
     try {
@@ -158,170 +106,263 @@ export default function NearbyVets() {
       <div className="mobile-phone-frame">
         <div className="mobile-screen">
           <div className="screen-content with-bottom-nav">
-        <div className="page-header">
-          <button className="back-button" onClick={() => navigate('/home')}>← Back</button>
-          <h1 className="page-title">Nearby Vets</h1>
-          <button className="logout-button" onClick={handleLogout}>Logout</button>
-        </div>
+            <div className="page-header">
+              <button className="back-button" onClick={() => navigate('/home')}>← Back</button>
+              <h1 className="page-title">Nearby Vets</h1>
+              <button className="logout-button" onClick={handleLogout}>Logout</button>
+            </div>
 
-        <div className="search-section">
-          <div className="search-container">
-            <div className="search-icon">🔎</div>
-            <input
-              className="search-input"
-              placeholder="Search for vets or pet services"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-        </div>
+            <div className="search-section" style={{ padding: '16px', paddingBottom: '8px' }}>
+              <div className="search-container" style={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: '#F3F4F6',
+                borderRadius: '12px',
+                padding: '10px 16px',
+                gap: '12px'
+              }}>
+                <div style={{ fontSize: '20px' }}>🔎</div>
+                <input
+                  className="search-input"
+                  placeholder="Search veterinarians, clinics, or specialties"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  style={{
+                    flex: 1,
+                    border: 'none',
+                    background: 'transparent',
+                    outline: 'none',
+                    fontSize: '14px',
+                    color: '#1F2937'
+                  }}
+                />
+              </div>
+            </div>
 
-        {loading && (
-          <div style={{ padding: 16 }}><p>Loading nearby vets…</p></div>
-        )}
-        {error && (
-          <div className="error-message" style={{ margin: 16 }}>
-            <span className="error-icon">⚠️</span>
-            {error}
-          </div>
-        )}
+            {error && (
+              <div style={{ 
+                margin: '0 16px 16px', 
+                padding: '12px', 
+                backgroundColor: '#FEF3C7', 
+                border: '1px solid #FCD34D', 
+                borderRadius: '8px',
+                color: '#92400E',
+                fontSize: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span>⚠️</span>
+                <span>{error}</span>
+              </div>
+            )}
 
-        <div className="vets-list">
-          <div style={{ height: 360, margin: '16px', borderRadius: 12, overflow: 'hidden', border: '1px solid #E0E0E0' }}>
-            <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
-          </div>
-          {filtered.map(v => (
-            <div key={v.id} className="vet-card">
-              <div className="vet-header">
-                <div className="vet-name">{v.name}</div>
-                <div className="vet-address">{v.address}</div>
-                <div className="vet-meta">
-                  {v.rating ? <div className="vet-rating">⭐ {v.rating} ({v.userRatingsTotal || 0})</div> : null}
-                  {typeof v.openNow === 'boolean' && (
-                    <div className="vet-distance" style={{ color: v.openNow ? '#38A169' : '#DC2626' }}>
-                      {v.openNow ? 'Open now' : 'Closed'}
-                    </div>
-                  )}
-                  {coords && v.location && (
-                    <div className="vet-distance">{formatDistance(coords, v.location)}</div>
-                  )}
+            <div className="vets-list" style={{ padding: '0 16px 16px' }}>
+              {loading && (
+                <div style={{ 
+                  padding: '40px 20px', 
+                  textAlign: 'center', 
+                  color: '#6B7280',
+                  fontSize: '14px'
+                }}>
+                  Loading veterinarians...
                 </div>
-              </div>
+              )}
 
-              <div className="vet-actions">
-                {v.location && (
-                  <a
-                    className="action-button"
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${v.location.lat},${v.location.lng}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Directions
-                  </a>
-                )}
-                <a
-                  className="action-button"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(v.name + ' ' + (v.address || ''))}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Search
-                </a>
-              </div>
-            </div>
-          ))}
+              {!loading && filtered.length > 0 && (
+                <>
+                  <div style={{ 
+                    fontSize: '14px', 
+                    color: '#6B7280', 
+                    marginBottom: '12px',
+                    fontWeight: '500'
+                  }}>
+                    Found {filtered.length} {filtered.length === 1 ? 'veterinarian' : 'veterinarians'}
+                  </div>
+                  {filtered.map(vet => (
+                    <div 
+                      key={vet.id} 
+                      style={{
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '12px',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                        border: '1px solid #E5E7EB'
+                      }}
+                    >
+                      <div style={{ marginBottom: '12px' }}>
+                        <div style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '600', 
+                          color: '#1F2937',
+                          marginBottom: '4px'
+                        }}>
+                          {vet.name}
+                        </div>
+                        <div style={{ 
+                          fontSize: '15px', 
+                          color: '#F7931E',
+                          fontWeight: '500',
+                          marginBottom: '6px'
+                        }}>
+                          {vet.clinic}
+                        </div>
+                        <div style={{ 
+                          fontSize: '13px', 
+                          color: '#6B7280',
+                          marginBottom: '8px'
+                        }}>
+                          📍 {vet.address}
+                        </div>
+                      </div>
 
-          {!loading && filtered.length === 0 && (
-            <div className="empty-state">
-              <div className="empty-title">No results</div>
-              <p className="empty-description">Try a different search or move to another area.</p>
+                      <div style={{ 
+                        display: 'flex', 
+                        flexWrap: 'wrap', 
+                        gap: '12px',
+                        marginBottom: '12px',
+                        paddingBottom: '12px',
+                        borderBottom: '1px solid #E5E7EB'
+                      }}>
+                        <div style={{ 
+                          fontSize: '13px', 
+                          color: '#1F2937',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          ⭐ <strong>{vet.rating}</strong> Rating
+                        </div>
+                        <div style={{ 
+                          fontSize: '13px',
+                          fontWeight: '500',
+                          color: vet.openNow ? '#059669' : '#DC2626',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          {vet.openNow ? '🟢 Open now' : '🔴 Closed'}
+                        </div>
+                        <div style={{ 
+                          fontSize: '13px', 
+                          color: '#6B7280'
+                        }}>
+                          🏥 {vet.specialization}
+                        </div>
+                      </div>
+
+                      <div style={{ 
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '8px',
+                        fontSize: '13px',
+                        color: '#6B7280',
+                        marginBottom: '12px'
+                      }}>
+                        <div>📞 {vet.phone}</div>
+                        <div>💼 {vet.experience}</div>
+                      </div>
+
+                      <div className="vet-actions" style={{ 
+                        display: 'flex', 
+                        gap: '8px', 
+                        marginTop: '8px'
+                      }}>
+                        <a
+                          href={`tel:${vet.phone}`}
+                          style={{
+                            flex: 1,
+                            padding: '10px 16px',
+                            backgroundColor: '#F7931E',
+                            color: '#FFFFFF',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                            textDecoration: 'none',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = '#E67E22'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = '#F7931E'}
+                        >
+                          📞 Call
+                        </a>
+                        <a
+                          href={`https://www.google.com/search?q=${encodeURIComponent(vet.clinic + ' ' + vet.address)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            flex: 1,
+                            padding: '10px 16px',
+                            backgroundColor: '#FFFFFF',
+                            color: '#1F2937',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                            textDecoration: 'none',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            border: '1px solid #D1D5DB',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = '#F9FAFB'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = '#FFFFFF'}
+                        >
+                          🔍 Search
+                        </a>
+                        <button
+                          onClick={() => navigate('/schedule', { state: { vetName: vet.name, vetAddress: vet.address } })}
+                          style={{
+                            flex: 1,
+                            padding: '10px 16px',
+                            backgroundColor: '#10B981',
+                            color: '#FFFFFF',
+                            borderRadius: '8px',
+                            border: 'none',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = '#059669'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = '#10B981'}
+                        >
+                          📅 Book
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {!loading && filtered.length === 0 && (
+                <div className="empty-state" style={{
+                  padding: '40px 20px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
+                  <div style={{ 
+                    fontSize: '18px', 
+                    fontWeight: '600', 
+                    color: '#1F2937',
+                    marginBottom: '8px'
+                  }}>
+                    No veterinarians found
+                  </div>
+                  <p style={{ 
+                    fontSize: '14px', 
+                    color: '#6B7280',
+                    marginBottom: '16px'
+                  }}>
+                    Try a different search term.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
           </div>
           <BottomNavigation userType="owner" />
         </div>
       </div>
     </div>
   );
-}
-
-async function getCurrentPositionSafe(timeoutMs = 6000) {
-  if (!('geolocation' in navigator)) return null;
-  return new Promise((resolve) => {
-    let settled = false;
-    const timer = setTimeout(() => {
-      if (!settled) resolve(null);
-    }, timeoutMs);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        settled = true;
-        clearTimeout(timer);
-        resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      },
-      () => {
-        settled = true;
-        clearTimeout(timer);
-        resolve(null);
-      },
-      { enableHighAccuracy: true, maximumAge: 30000, timeout: timeoutMs }
-    );
-  });
-}
-
-async function geocodeCity(city) {
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(city)}`);
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!data?.length) return null;
-    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-  } catch {
-    return null;
-  }
-}
-
-function formatDistance(a, b) {
-  const d = haversine(a.lat, a.lng, b.lat, b.lng);
-  return d < 1 ? `${Math.round(d * 1000)} m` : `${d.toFixed(1)} km`;
-}
-
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371; // km
-  const toRad = (v) => (v * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-// --- Google Maps Loader and helpers ---
-function loadGoogleMaps(apiKey) {
-  if (window.google && window.google.maps) return Promise.resolve(window.google);
-  const existing = document.querySelector('script[data-google-maps]');
-  if (existing) {
-    return new Promise(resolve => {
-      existing.addEventListener('load', () => resolve(window.google));
-    });
-  }
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey || '')}`;
-    script.async = true;
-    script.defer = true;
-    script.setAttribute('data-google-maps', '1');
-    script.onload = () => resolve(window.google);
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
-function escapeHtml(str = '') {
-  return String(str)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
 }

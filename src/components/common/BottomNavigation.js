@@ -9,9 +9,7 @@ export default function BottomNavigation({ userType = 'owner' }) {
     if (userType === 'vet') {
       return [
         { path: '/vet/dashboard', icon: '🏠', label: 'Dashboard' },
-        { path: '/vet/records', icon: '🐾', label: 'Pet Records' },
         { path: '/vet/scheduling', icon: '📅', label: 'Appointments' },
-        { path: '/admin/dashboard', icon: '👥', label: 'Users' },
         { path: '/vet/settings', icon: '⚙️', label: 'Settings' }
       ];
     } else if (userType === 'admin') {

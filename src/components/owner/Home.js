@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { auth, db } from '../../api/firebase';
 import { collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { logoutUser } from '../../api/authService';
@@ -9,6 +9,7 @@ import BottomNavigation from '../common/BottomNavigation';
 
 export default function OwnerHome() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [profile, setProfile] = useState(null);
   const [pets, setPets] = useState([]);
   const [weather, setWeather] = useState(null);
@@ -18,8 +19,22 @@ export default function OwnerHome() {
   const [petMilestones, setPetMilestones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [welcomeName, setWelcomeName] = useState('');
 
   const user = auth?.currentUser || null;
+
+  // Check if user just signed up
+  useEffect(() => {
+    if (location.state?.isNewUser) {
+      setShowWelcome(true);
+      setWelcomeName(location.state.userName || '');
+      // Clear the state so it doesn't show again on refresh
+      window.history.replaceState({}, document.title);
+      // Auto-hide after 5 seconds
+      setTimeout(() => setShowWelcome(false), 5000);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     if (!user) {
@@ -94,7 +109,7 @@ export default function OwnerHome() {
           const now = new Date();
           const userAppointments = appointmentsSnap.docs
             .map(d => ({ id: d.id, ...d.data() }))
-            .filter(a => a.ownerID === user.uid && new Date(a.date) >= now && a.status === 'confirmed')
+            .filter(a => a.ownerID === user.uid && new Date(a.date) >= now && (a.status === 'confirmed' || a.status === 'pending'))
             .sort((a, b) => new Date(a.date) - new Date(b.date));
 
           setUpcomingAppointment(userAppointments.length > 0 ? userAppointments[0] : null);
@@ -191,6 +206,44 @@ export default function OwnerHome() {
           </div>
         </div>
 
+        {/* Welcome Message for New Users */}
+        {showWelcome && (
+          <div style={{
+            margin: '16px',
+            padding: '16px',
+            backgroundColor: '#D1FAE5',
+            border: '1px solid #6EE7B7',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            position: 'relative'
+          }}>
+            <div style={{ fontSize: '32px' }}>🎉</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '16px', fontWeight: '600', color: '#065F46', marginBottom: '4px' }}>
+                Welcome to Pawsera{welcomeName ? `, ${welcomeName}` : ''}!
+              </div>
+              <div style={{ fontSize: '13px', color: '#047857' }}>
+                Your account has been created successfully. Start by adding your first pet!
+              </div>
+            </div>
+            <button
+              onClick={() => setShowWelcome(false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '20px',
+                cursor: 'pointer',
+                color: '#065F46',
+                padding: '4px 8px'
+              }}
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         {/* Welcome Section */}
         <div style={{ padding: '16px', textAlign: 'center' }}>
           <h2 style={{ fontSize: '18px', color: '#6B7280', margin: '0 0 8px 0' }}>
@@ -246,6 +299,125 @@ export default function OwnerHome() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Scheduled Appointments Section */}
+        <div style={{ padding: '0 16px', marginBottom: '24px' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '16px'
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1F2937', margin: 0 }}>
+              Scheduled Appointments
+            </h3>
+            <button
+              onClick={() => navigate('/schedule')}
+              style={{
+                backgroundColor: '#F7931E',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 4px rgba(247, 147, 30, 0.3)'
+              }}
+            >
+              <span>+</span>
+              <span>Schedule New</span>
+            </button>
+          </div>
+
+          {upcomingAppointment ? (
+            <div style={{ 
+              backgroundColor: 'white', 
+              borderRadius: '12px', 
+              padding: '16px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              border: '1px solid #F3F4F6',
+              marginBottom: '12px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#1F2937', marginBottom: '4px' }}>
+                    {upcomingAppointment.petName || 'Pet Appointment'}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#6B7280', marginBottom: '8px' }}>
+                    {upcomingAppointment.vetName || 'Veterinarian'}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#9CA3AF' }}>
+                    {upcomingAppointment.purpose || 'General Checkup'}
+                  </div>
+                </div>
+                <div style={{
+                  padding: '4px 12px',
+                  borderRadius: '12px',
+                  backgroundColor: upcomingAppointment.status === 'confirmed' ? '#D1FAE5' : '#FEF3C7',
+                  color: upcomingAppointment.status === 'confirmed' ? '#065F46' : '#92400E',
+                  fontSize: '12px',
+                  fontWeight: '600'
+                }}>
+                  {upcomingAppointment.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                </div>
+              </div>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                paddingTop: '12px',
+                borderTop: '1px solid #F3F4F6'
+              }}>
+                <div style={{ fontSize: '14px', color: '#6B7280' }}>📅</div>
+                <div style={{ fontSize: '14px', color: '#1F2937', fontWeight: '500' }}>
+                  {new Date(upcomingAppointment.date).toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                  })}
+                </div>
+                <div style={{ fontSize: '14px', color: '#6B7280', marginLeft: '8px' }}>🕐</div>
+                <div style={{ fontSize: '14px', color: '#1F2937', fontWeight: '500' }}>
+                  {upcomingAppointment.time || '10:00 AM'}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div style={{ 
+              backgroundColor: 'white', 
+              borderRadius: '12px', 
+              padding: '24px',
+              textAlign: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              border: '1px solid #F3F4F6'
+            }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>📅</div>
+              <div style={{ fontSize: '15px', color: '#6B7280', marginBottom: '16px' }}>
+                No upcoming appointments scheduled
+              </div>
+              <button
+                onClick={() => navigate('/schedule')}
+                style={{
+                  backgroundColor: '#F7931E',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 4px rgba(247, 147, 30, 0.3)'
+                }}
+              >
+                Schedule Your First Appointment
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Notifications Section */}

@@ -477,9 +477,99 @@ export const getDummyPetsByOwner = (ownerId) => {
   return dummyPets.filter(pet => pet.ownerId === ownerId);
 };
 
+export const dummyMedicalHistory = [
+  {
+    id: 'med1',
+    petId: 'pet1',
+    title: 'Annual Check-up',
+    doctor: 'Olivia Bennett',
+    date: '2024-02-15',
+    type: 'checkup',
+    description: 'Complete physical examination. Pet is in excellent health. All vaccinations are up to date. Weight: 65 lbs. Heart rate and temperature normal.',
+    createdAt: '2024-02-15T10:00:00Z'
+  },
+  {
+    id: 'med2',
+    petId: 'pet1',
+    title: 'Rabies Vaccination',
+    doctor: 'Olivia Bennett',
+    date: '2024-02-15',
+    type: 'vaccination',
+    description: 'Rabies vaccination administered. Next due: February 2025. No adverse reactions observed.',
+    createdAt: '2024-02-15T10:30:00Z'
+  },
+  {
+    id: 'med3',
+    petId: 'pet1',
+    title: 'Dental Cleaning',
+    doctor: 'Ethan Walker',
+    date: '2024-01-10',
+    type: 'dental',
+    description: 'Professional dental cleaning performed. Minor tartar buildup removed. Teeth are in good condition. Recommended annual cleaning.',
+    createdAt: '2024-01-10T14:00:00Z'
+  },
+  {
+    id: 'med4',
+    petId: 'pet2',
+    title: 'Skin Allergy Consultation',
+    doctor: 'Ava Mitchell',
+    date: '2024-01-20',
+    type: 'checkup',
+    description: 'Follow-up on skin irritation. Diagnosed with fish allergy. Prescribed hypoallergenic diet. Skin condition improving.',
+    createdAt: '2024-01-20T11:00:00Z'
+  },
+  {
+    id: 'med5',
+    petId: 'pet2',
+    title: 'Annual Vaccination',
+    doctor: 'Ava Mitchell',
+    date: '2024-01-20',
+    type: 'vaccination',
+    description: 'Annual vaccinations completed: FVRCP and Rabies. All vaccines up to date.',
+    createdAt: '2024-01-20T11:30:00Z'
+  },
+  {
+    id: 'med6',
+    petId: 'pet3',
+    title: 'Hip Dysplasia Follow-up',
+    doctor: 'Ethan Walker',
+    date: '2024-03-01',
+    type: 'checkup',
+    description: 'X-ray review shows stable condition. Prescribed joint supplements. Continue monitoring. Pet is responding well to treatment.',
+    createdAt: '2024-03-01T09:00:00Z'
+  },
+  {
+    id: 'med7',
+    petId: 'pet4',
+    title: 'Annual Wellness Exam',
+    doctor: 'Olivia Bennett',
+    date: '2024-02-28',
+    type: 'checkup',
+    description: 'Complete wellness examination. Pet is healthy and active. All systems normal. Weight: 12 lbs.',
+    createdAt: '2024-02-28T10:00:00Z'
+  },
+  {
+    id: 'med8',
+    petId: 'pet5',
+    title: 'Puppy Vaccination Series',
+    doctor: 'Ethan Walker',
+    date: '2024-03-10',
+    type: 'vaccination',
+    description: 'Second round of puppy vaccinations completed. DHPP and Bordatella administered. Next vaccination due in 3 weeks.',
+    createdAt: '2024-03-10T15:00:00Z'
+  }
+];
+
 // Get appointments by status
 export const getDummyAppointmentsByStatus = (status) => {
   return dummyAppointments.filter(appointment => appointment.status === status);
+};
+
+// Get medical history by pet ID
+export const getDummyMedicalHistoryByPetId = (petId) => {
+  return dummyMedicalHistory
+    .filter(record => record.petId === petId)
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 };
 
 // Get pending vet approvals

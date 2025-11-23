@@ -3,16 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../api/firebase';
 import { collection, doc, getDocs, getDoc, updateDoc, addDoc } from 'firebase/firestore';
 import { logoutUser } from '../../api/authService';
-import { getDummyUsers, getDummySystemActivity } from '../../api/dummyData';
+import { getDummyUsers, getDummySystemActivity, getDummyAppointments, getDummyPets } from '../../api/dummyData';
 import BottomNavigation from '../common/BottomNavigation';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [pendingVets, setPendingVets] = useState([]);
   const [systemActivity, setSystemActivity] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [allAppointments, setAllAppointments] = useState([]);
+  const [allPets, setAllPets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentView, setCurrentView] = useState('admin');
 
   const user = auth?.currentUser || null;
 
@@ -29,48 +31,38 @@ export default function AdminDashboard() {
       setLoading(true);
       setError(null);
       
-      // Load pending vet approvals
-      const usersSnap = await getDocs(collection(db, 'users'));
-      const pendingVetsList = usersSnap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(u => u.role === 'Vet' && u.status === 'pending');
-
-      // Mock system activity data
-      const mockActivity = [
-        {
-          id: '1',
-          type: 'approval',
-          message: 'Vet account for Dr. Lee approved',
-          user: 'Admin_JohnDoe',
-          timestamp: '2 hours ago',
-          icon: '🛡️'
-        },
-        {
-          id: '2',
-          type: 'registration',
-          message: 'New user \'sarah_p\' registered',
-          user: 'System',
-          timestamp: '5 hours ago',
-          icon: '👤'
-        },
-        {
-          id: '3',
-          type: 'security',
-          message: 'Failed login attempt for \'admin\'',
-          user: 'IP: 192.168.1.10',
-          timestamp: '1 day ago',
-          icon: '⚠️'
-        }
-      ];
-
+      // Always use sample data for consistent experience across all admins
+      const dummyUsers = getDummyUsers();
+      const dummyAppointments = getDummyAppointments();
+      const dummyPets = getDummyPets();
+      const systemActivityData = getDummySystemActivity();
+      
+      // Filter pending vets from dummy data
+      const pendingVetsList = dummyUsers.filter(u => u.role === 'Vet' && u.status === 'pending');
+      
+      console.log('Admin Dashboard Data Loaded:', {
+        usersCount: dummyUsers.length,
+        appointmentsCount: dummyAppointments.length,
+        petsCount: dummyPets.length,
+        pendingVetsCount: pendingVetsList.length,
+        systemActivityCount: systemActivityData.length
+      });
+      
       setPendingVets(pendingVetsList);
-      setSystemActivity(mockActivity);
+      setAllUsers(dummyUsers);
+      setAllAppointments(dummyAppointments);
+      setAllPets(dummyPets);
+      setSystemActivity(systemActivityData);
     } catch (err) {
-      console.warn('Could not load admin data, using dummy data:', err.message);
+      console.error('Could not load admin data:', err);
+      setError('Unable to load admin data. Please check your connection.');
       // Use dummy data as fallback
       const dummyUsers = getDummyUsers();
       const pendingVetsList = dummyUsers.filter(u => u.role === 'Vet' && u.status === 'pending');
       setPendingVets(pendingVetsList);
+      setAllUsers(dummyUsers);
+      setAllAppointments(getDummyAppointments());
+      setAllPets(getDummyPets());
       setSystemActivity(getDummySystemActivity());
     } finally {
       setLoading(false);
@@ -79,29 +71,41 @@ export default function AdminDashboard() {
 
   const handleVetApproval = async (vetId, approved) => {
     try {
-      await updateDoc(doc(db, 'users', vetId), {
-        status: approved ? 'approved' : 'rejected',
-        updatedAt: new Date().toISOString(),
-        reviewedBy: user.uid
-      });
+      if (db) {
+        try {
+          await updateDoc(doc(db, 'users', vetId), {
+            status: approved ? 'approved' : 'rejected',
+            updatedAt: new Date().toISOString(),
+            reviewedBy: user.uid
+          });
+          
+          // Add to system activity
+          try {
+            await addDoc(collection(db, 'system_activity'), {
+              type: 'approval',
+              message: `Vet account ${approved ? 'approved' : 'rejected'}`,
+              user: user.displayName || user.email,
+              timestamp: new Date().toISOString(),
+              vetId: vetId
+            });
+          } catch (activityErr) {
+            console.warn('Could not add to system activity:', activityErr);
+            // Continue even if activity log fails
+          }
+        } catch (updateErr) {
+          console.warn('Could not update vet status in Firebase:', updateErr);
+          // Continue to update local state even if Firebase fails
+        }
+      }
       
-      // Add to system activity
-      await addDoc(collection(db, 'system_activity'), {
-        type: 'approval',
-        message: `Vet account ${approved ? 'approved' : 'rejected'}`,
-        user: user.displayName || user.email,
-        timestamp: new Date().toISOString(),
-        vetId: vetId
-      });
+      // Update local state immediately for better UX
+      setPendingVets(prev => prev.filter(vet => vet.id !== vetId));
       
+      // Reload data to refresh the view
       await loadData();
     } catch (err) {
-      console.warn('Could not update vet status:', err.message);
-      if (err.message.includes('permission') || err.message.includes('insufficient')) {
-        setError('Unable to update vet status. Please check your connection and try again.');
-      } else {
-        setError(err.message || 'Failed to update vet status');
-      }
+      console.error('Error in vet approval:', err);
+      setError('Unable to update vet status. Please try again.');
     }
   };
 
@@ -142,7 +146,10 @@ export default function AdminDashboard() {
     <div className="screen-container">
       <div className="mobile-phone-frame">
         <div className="mobile-screen">
-          <div className="screen-content with-bottom-nav">
+          <div className="screen-content with-bottom-nav" style={{
+            WebkitOverflowScrolling: 'touch',
+            paddingBottom: '100px'
+          }}>
         <div className="page-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div className="paw-logo">🐾</div>
@@ -151,44 +158,122 @@ export default function AdminDashboard() {
           <button className="logout-button" onClick={handleLogout}>Logout</button>
         </div>
 
-        {/* View Toggle */}
-        <div style={{ 
-          display: 'flex', 
-          margin: '16px', 
-          backgroundColor: '#f0f0f0', 
-          borderRadius: '8px',
-          padding: '4px'
-        }}>
-          <button
-            onClick={() => setCurrentView('vet')}
-            style={{
-              flex: 1,
-              padding: '8px 16px',
-              border: 'none',
-              borderRadius: '6px',
-              backgroundColor: currentView === 'vet' ? '#F7931E' : 'transparent',
-              color: currentView === 'vet' ? 'white' : '#666',
-              fontWeight: '500',
-              cursor: 'pointer'
-            }}
-          >
-            Vet View
-          </button>
-          <button
-            onClick={() => setCurrentView('admin')}
-            style={{
-              flex: 1,
-              padding: '8px 16px',
-              border: 'none',
-              borderRadius: '6px',
-              backgroundColor: currentView === 'admin' ? '#F7931E' : 'transparent',
-              color: currentView === 'admin' ? 'white' : '#666',
-              fontWeight: '500',
-              cursor: 'pointer'
-            }}
-          >
-            Admin View
-          </button>
+        {/* Error Message */}
+        {error && (
+          <div style={{
+            margin: '16px',
+            padding: '12px',
+            backgroundColor: '#FEE2E2',
+            border: '1px solid #FCA5A5',
+            borderRadius: '8px',
+            color: '#991B1B',
+            fontSize: '14px'
+          }}>
+            ⚠️ {error}
+          </div>
+        )}
+
+        {/* Welcome Section */}
+        <div style={{ padding: '16px', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '18px', color: '#6B7280', margin: '0 0 8px 0' }}>
+            Admin Dashboard
+          </h2>
+          {/* Debug info - remove in production */}
+          {process.env.NODE_ENV === 'development' && (
+            <div style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '8px' }}>
+              Users: {allUsers.length} | Appointments: {allAppointments.length} | Pets: {allPets.length} | Pending: {pendingVets.length}
+            </div>
+          )}
+        </div>
+
+        {/* Stats Overview */}
+        <div style={{ padding: '0 16px', marginBottom: '24px' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '1fr 1fr', 
+            gap: '12px',
+            maxWidth: '100%'
+          }}>
+            <div style={{ 
+              backgroundColor: '#FFF7ED', 
+              borderRadius: '12px', 
+              padding: '20px 16px',
+              textAlign: 'center',
+              border: '1px solid #FED7AA',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+              minHeight: '80px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#F7931E', marginBottom: '4px' }}>
+                {allUsers.length}
+              </div>
+              <div style={{ fontSize: '13px', color: '#6B7280', fontWeight: '500' }}>
+                Total Users
+              </div>
+            </div>
+            
+            <div style={{ 
+              backgroundColor: '#FFF7ED', 
+              borderRadius: '12px', 
+              padding: '20px 16px',
+              textAlign: 'center',
+              border: '1px solid #FED7AA',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+              minHeight: '80px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#F7931E', marginBottom: '4px' }}>
+                {allPets.length}
+              </div>
+              <div style={{ fontSize: '13px', color: '#6B7280', fontWeight: '500' }}>
+                Total Pets
+              </div>
+            </div>
+
+            <div style={{ 
+              backgroundColor: '#FFF7ED', 
+              borderRadius: '12px', 
+              padding: '20px 16px',
+              textAlign: 'center',
+              border: '1px solid #FED7AA',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+              minHeight: '80px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#F7931E', marginBottom: '4px' }}>
+                {allAppointments.length}
+              </div>
+              <div style={{ fontSize: '13px', color: '#6B7280', fontWeight: '500' }}>
+                Total Appointments
+              </div>
+            </div>
+
+            <div style={{ 
+              backgroundColor: '#FFF7ED', 
+              borderRadius: '12px', 
+              padding: '20px 16px',
+              textAlign: 'center',
+              border: '1px solid #FED7AA',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+              minHeight: '80px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#F7931E', marginBottom: '4px' }}>
+                {pendingVets.length}
+              </div>
+              <div style={{ fontSize: '13px', color: '#6B7280', fontWeight: '500' }}>
+                Pending Approvals
+              </div>
+            </div>
+          </div>
         </div>
 
 
@@ -301,10 +386,10 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        {/* User Management Section */}
+        {/* Quick Actions Section */}
         <div style={{ padding: '0 16px', marginTop: '24px' }}>
           <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1F2937', marginBottom: '16px' }}>
-            User Management
+            Quick Actions
           </h3>
           
           <div style={{ 
@@ -320,26 +405,13 @@ export default function AdminDashboard() {
                 padding: '20px',
                 textAlign: 'center',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                border: '1px solid #F3F4F6'
               }}
             >
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>👥</div>
               <div style={{ fontSize: '14px', fontWeight: '500', color: '#1F2937' }}>
                 Manage Users
-              </div>
-            </div>
-            
-            <div style={{ 
-              backgroundColor: 'white', 
-              borderRadius: '12px', 
-              padding: '20px',
-              textAlign: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              cursor: 'pointer'
-            }}>
-              <div style={{ fontSize: '24px', marginBottom: '8px' }}>👨‍⚕️⚙️</div>
-              <div style={{ fontSize: '14px', fontWeight: '500', color: '#1F2937' }}>
-                Manage Vets
               </div>
             </div>
             
@@ -351,12 +423,13 @@ export default function AdminDashboard() {
                 padding: '20px',
                 textAlign: 'center',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                border: '1px solid #F3F4F6'
               }}
             >
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>📅</div>
               <div style={{ fontSize: '14px', fontWeight: '500', color: '#1F2937' }}>
-                Appointments
+                All Appointments
               </div>
             </div>
             
@@ -368,26 +441,13 @@ export default function AdminDashboard() {
                 padding: '20px',
                 textAlign: 'center',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                border: '1px solid #F3F4F6'
               }}
             >
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>⚙️</div>
               <div style={{ fontSize: '14px', fontWeight: '500', color: '#1F2937' }}>
                 Settings
-              </div>
-            </div>
-            
-            <div style={{ 
-              backgroundColor: 'white', 
-              borderRadius: '12px', 
-              padding: '20px',
-              textAlign: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              cursor: 'pointer'
-            }}>
-              <div style={{ fontSize: '24px', marginBottom: '8px' }}>🛡️👤</div>
-              <div style={{ fontSize: '14px', fontWeight: '500', color: '#1F2937' }}>
-                Roles & Permissions
               </div>
             </div>
           </div>

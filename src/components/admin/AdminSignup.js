@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../../api/authService';
-import '../../styles/styles.css';
 
-export default function OwnerSignup() {
+export default function AdminSignup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,12 +39,12 @@ export default function OwnerSignup() {
     }
 
     try {
-      // Register user with correct parameter order: email, password, role, name
-      const newUser = await registerUser(email, password, 'PetOwner', name);
-      console.log('✅ Account created successfully for:', newUser.email);
-      // Navigate to home after successful registration
-      // Pass a flag to show welcome message
-      navigate('/home', { state: { isNewUser: true, userName: name } });
+      // Register user with Admin role
+      const newUser = await registerUser(email, password, 'Admin', name);
+      console.log('✅ Admin account created successfully for:', newUser.email);
+      
+      // Navigate to admin dashboard after successful registration
+      navigate('/admin/dashboard', { state: { isNewUser: true, userName: name } });
     } catch (err) {
       console.error('Registration error:', err);
       // Provide user-friendly error messages
@@ -96,15 +95,15 @@ export default function OwnerSignup() {
                     <div className="paw-logo">🐾</div>
                     <h1 className="brand-name">Pawsera</h1>
                   </div>
-                  <p className="welcome-text">Join our pet care community</p>
+                  <p className="welcome-text">Join as an Administrator</p>
                 </div>
 
                 {/* Signup Form */}
                 <div className="login-form" style={{ width: '100%' }}>
                   <form onSubmit={handleSubmit} className="form-container" style={{ marginBottom: '24px' }}>
                     <div className="form-header">
-                      <h2 className="form-title">Create Account</h2>
-                      <p className="form-subtitle">Sign up to start managing your pet's health</p>
+                      <h2 className="form-title">Create Admin Account</h2>
+                      <p className="form-subtitle">Sign up to manage the Pawsera platform</p>
                     </div>
 
                     <div className="form-group">
@@ -135,7 +134,7 @@ export default function OwnerSignup() {
                         marginTop: '4px', 
                         display: 'block' 
                       }}>
-                        Use any personal email address (Gmail, Yahoo, Outlook, etc.)
+                        Use any personal or professional email address
                       </small>
                     </div>
 
@@ -254,7 +253,7 @@ export default function OwnerSignup() {
                           boxShadow: '0 4px 12px rgba(247, 147, 30, 0.3)'
                         }}
                       >
-                        {isLoading ? 'Creating Account...' : 'Create Account'}
+                        {isLoading ? 'Creating Account...' : 'Create Admin Account'}
                       </button>
                     </div>
                   </form>
@@ -265,10 +264,10 @@ export default function OwnerSignup() {
                       <Link to="/" className="register-link"> Sign in here</Link>
                     </p>
                     <p className="register-text" style={{ marginTop: '8px' }}>
-                      Not a pet owner?
-                      <Link to="/vet/signup" className="register-link"> Sign up as Veterinarian</Link>
+                      Not an administrator?
+                      <Link to="/signup" className="register-link"> Sign up as Pet Owner</Link>
                       {' or '}
-                      <Link to="/admin/signup" className="register-link">Sign up as Administrator</Link>
+                      <Link to="/vet/signup" className="register-link">Sign up as Veterinarian</Link>
                     </p>
                   </div>
                 </div>
@@ -280,3 +279,4 @@ export default function OwnerSignup() {
     </div>
   );
 }
+

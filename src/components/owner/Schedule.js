@@ -12,10 +12,12 @@ export default function Schedule() {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showError, setShowError] = useState(false);
   const [newAppointment, setNewAppointment] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     petId: '',
     vetName: '',
@@ -27,6 +29,43 @@ export default function Schedule() {
   });
 
   const user = auth?.currentUser || null;
+
+  // Helper functions for localStorage
+  const saveAppointmentsToLocalStorage = (appts) => {
+    try {
+      const userId = user?.uid || 'default';
+      localStorage.setItem(`pawsera_appointments_${userId}`, JSON.stringify(appts));
+      console.log('✅ Appointments saved to localStorage');
+    } catch (err) {
+      console.warn('Could not save appointments to localStorage:', err);
+    }
+  };
+
+  const loadAppointmentsFromLocalStorage = () => {
+    try {
+      const userId = user?.uid || 'default';
+      const saved = localStorage.getItem(`pawsera_appointments_${userId}`);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (err) {
+      console.warn('Could not load appointments from localStorage:', err);
+    }
+    return [];
+  };
+
+  const loadPetsFromLocalStorage = () => {
+    try {
+      const userId = user?.uid || 'default';
+      const saved = localStorage.getItem(`pawsera_pets_${userId}`);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (err) {
+      console.warn('Could not load pets from localStorage:', err);
+    }
+    return [];
+  };
 
   useEffect(() => {
     if (!user) {
@@ -41,27 +80,124 @@ export default function Schedule() {
       setLoading(true);
       setError(null);
       
-      const [appointmentsSnap, petsSnap] = await Promise.all([
-        getDocs(collection(db, 'appointments')),
-        getDocs(collection(db, 'pets'))
-      ]);
+      // Load from localStorage first
+      const localAppointments = loadAppointmentsFromLocalStorage();
+      const localPets = loadPetsFromLocalStorage();
+      
+      if (db) {
+        try {
+          const [appointmentsSnap, petsSnap] = await Promise.all([
+            getDocs(collection(db, 'appointments')),
+            getDocs(collection(db, 'pets'))
+          ]);
 
-      const userAppointments = appointmentsSnap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(a => a.ownerID === user.uid)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
+          const userAppointments = appointmentsSnap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(a => a.ownerID === user.uid || a.ownerId === user.uid)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      const userPets = petsSnap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(p => p.ownerID === user.uid);
+          const userPets = petsSnap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(p => p.ownerID === user.uid);
 
-      setAppointments(userAppointments);
-      setPets(userPets);
+          // Merge Firebase data with localStorage data
+          const localApptsNotInFirebase = localAppointments.filter(localAppt => 
+            !userAppointments.some(fbAppt => 
+              fbAppt.id === localAppt.id || 
+              (fbAppt.date === localAppt.date && 
+               fbAppt.time === localAppt.time && 
+               fbAppt.petId === localAppt.petId)
+            )
+          );
+
+          const localPetsNotInFirebase = localPets.filter(localPet => 
+            !userPets.some(fbPet => 
+              fbPet.id === localPet.id || 
+              (fbPet.name === localPet.name && fbPet.breed === localPet.breed)
+            )
+          );
+
+          const allAppointments = [...userAppointments, ...localApptsNotInFirebase].sort(
+            (a, b) => new Date(a.date) - new Date(b.date)
+          );
+          const allPets = [...userPets, ...localPetsNotInFirebase];
+
+          setAppointments(allAppointments);
+          setPets(allPets);
+          saveAppointmentsToLocalStorage(allAppointments);
+        } catch (firebaseErr) {
+          console.warn('Firebase error, using localStorage:', firebaseErr.message);
+          if (localAppointments.length > 0) {
+            setAppointments(localAppointments);
+            if (localPets.length > 0) {
+              setPets(localPets);
+            } else {
+              setPets(getDummyPets());
+            }
+          } else {
+            // Show sample dummy appointments for new users
+            const dummyAppts = getDummyAppointments();
+            const sampleAppts = dummyAppts.slice(0, 3).map(apt => ({
+              ...apt,
+              id: `sample_${apt.id}_${Date.now()}`,
+              ownerID: user.uid,
+              ownerId: user.uid
+            }));
+            setAppointments(sampleAppts);
+            setPets(getDummyPets());
+            // Save sample appointments to localStorage so they persist
+            saveAppointmentsToLocalStorage(sampleAppts);
+          }
+        }
+      } else {
+        // No Firebase, use localStorage or dummy data
+        if (localAppointments.length > 0) {
+          setAppointments(localAppointments);
+          if (localPets.length > 0) {
+            setPets(localPets);
+          } else {
+            setPets(getDummyPets());
+          }
+        } else {
+          // Show sample dummy appointments for new users
+          const dummyAppts = getDummyAppointments();
+          const sampleAppts = dummyAppts.slice(0, 3).map(apt => ({
+            ...apt,
+            id: `sample_${apt.id}_${Date.now()}`,
+            ownerID: user.uid,
+            ownerId: user.uid
+          }));
+          setAppointments(sampleAppts);
+          setPets(getDummyPets());
+          // Save sample appointments to localStorage so they persist
+          saveAppointmentsToLocalStorage(sampleAppts);
+        }
+      }
     } catch (err) {
-      console.warn('Could not load appointments, using dummy data:', err.message);
-      // Use dummy data as fallback
-      setAppointments(getDummyAppointments());
-      setPets(getDummyPets());
+      console.warn('Could not load data:', err.message);
+      const localAppointments = loadAppointmentsFromLocalStorage();
+      const localPets = loadPetsFromLocalStorage();
+      if (localAppointments.length > 0) {
+        setAppointments(localAppointments);
+        if (localPets.length > 0) {
+          setPets(localPets);
+        } else {
+          setPets(getDummyPets());
+        }
+      } else {
+        // Show sample dummy appointments for new users
+        const dummyAppts = getDummyAppointments();
+        const sampleAppts = dummyAppts.slice(0, 3).map(apt => ({
+          ...apt,
+          id: `sample_${apt.id}_${Date.now()}`,
+          ownerID: user.uid,
+          ownerId: user.uid
+        }));
+        setAppointments(sampleAppts);
+        setPets(getDummyPets());
+        // Save sample appointments to localStorage so they persist
+        saveAppointmentsToLocalStorage(sampleAppts);
+      }
     } finally {
       setLoading(false);
     }
@@ -74,45 +210,80 @@ export default function Schedule() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setError(null);
-      
-      // Simulate potential scheduling conflict (30% chance for demo)
-      const hasConflict = Math.random() < 0.3;
-      
-      if (hasConflict) {
-        setShowError(true);
-        setShowNewForm(false);
-        return;
-      }
+    e.stopPropagation();
+    
+    // Validate required fields
+    if (!formData.petId || !formData.vetName || !formData.vetAddress || !formData.date || !formData.time || !formData.purpose) {
+      setError('Please fill in all required fields');
+      return;
+    }
 
+    setSaving(true);
+    setError(null);
+    setSuccessMessage(null);
+    
+    try {
       const appointmentData = {
         ...formData,
-        ownerID: user.uid,
+        ownerID: user?.uid || 'unknown',
         status: 'confirmed',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
 
-      const docRef = await addDoc(collection(db, 'appointments'), appointmentData);
+      console.log('Saving appointment:', appointmentData);
+
+      let savedToFirebase = false;
       
-      setNewAppointment({
-        id: docRef.id,
+      // Try to save to Firestore if available
+      if (db) {
+        try {
+          const docRef = await addDoc(collection(db, 'appointments'), appointmentData);
+          console.log('✅ Appointment saved to Firestore with ID:', docRef.id);
+          savedToFirebase = true;
+        } catch (firestoreErr) {
+          console.warn('Firestore save failed, using local storage:', firestoreErr);
+          savedToFirebase = false;
+        }
+      }
+      
+      // Always add to local state and localStorage
+      const localAppointment = {
+        id: savedToFirebase ? undefined : `local_appt_${Date.now()}`,
         ...appointmentData,
         petName: pets.find(p => p.id === formData.petId)?.name || 'Unknown Pet'
+      };
+      
+      setAppointments(prev => {
+        const updated = [localAppointment, ...prev].sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        saveAppointmentsToLocalStorage(updated);
+        console.log('✅ Appointment added to local state. Total appointments:', updated.length);
+        return updated;
       });
       
+      setNewAppointment(localAppointment);
       setShowConfirmation(true);
       setShowNewForm(false);
       resetForm();
-      await loadData();
-    } catch (err) {
-      console.warn('Could not schedule appointment:', err.message);
-      if (err.message.includes('permission') || err.message.includes('insufficient')) {
-        setError('Unable to schedule appointment. Please check your connection and try again.');
-      } else {
-        setError(err.message || 'Failed to schedule appointment');
+      
+      // If saved to Firebase, reload to get the Firebase ID
+      if (savedToFirebase) {
+        try {
+          await loadData();
+        } catch (loadErr) {
+          console.warn('Could not reload data:', loadErr.message);
+        }
       }
+      
+      setSuccessMessage('Appointment scheduled successfully!');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      console.error('Error scheduling appointment:', err);
+      setError(err.message || 'Failed to schedule appointment. Please try again.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -120,18 +291,40 @@ export default function Schedule() {
     if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
     
     try {
-      await updateDoc(doc(db, 'appointments', appointmentId), {
-        status: 'cancelled',
-        updatedAt: new Date().toISOString()
-      });
+      if (db && !appointmentId.startsWith('local_')) {
+        try {
+          await updateDoc(doc(db, 'appointments', appointmentId), {
+            status: 'cancelled',
+            updatedAt: new Date().toISOString()
+          });
+        } catch (updateErr) {
+          console.warn('Could not update in Firebase:', updateErr.message);
+        }
+      }
+      
+      // Update local state and localStorage
+      const updatedAppointments = appointments.map(appt => 
+        appt.id === appointmentId 
+          ? { ...appt, status: 'cancelled', updatedAt: new Date().toISOString() }
+          : appt
+      );
+      setAppointments(updatedAppointments);
+      saveAppointmentsToLocalStorage(updatedAppointments);
+      
       await loadData();
+      setSuccessMessage('Appointment cancelled successfully!');
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       console.warn('Could not cancel appointment:', err.message);
-      if (err.message.includes('permission') || err.message.includes('insufficient')) {
-        setError('Unable to cancel appointment. Please check your connection and try again.');
-      } else {
-        setError(err.message || 'Failed to cancel appointment');
-      }
+      // Update local state anyway
+      const updatedAppointments = appointments.map(appt => 
+        appt.id === appointmentId 
+          ? { ...appt, status: 'cancelled', updatedAt: new Date().toISOString() }
+          : appt
+      );
+      setAppointments(updatedAppointments);
+      saveAppointmentsToLocalStorage(updatedAppointments);
+      setError('Appointment cancelled locally. May not be synced to server.');
     }
   };
 
@@ -149,6 +342,8 @@ export default function Schedule() {
     setShowConfirmation(false);
     setShowError(false);
     setNewAppointment(null);
+    setError(null);
+    setSaving(false);
   };
 
   const handleLogout = async () => {
@@ -380,6 +575,34 @@ export default function Schedule() {
         </div>
 
 
+        {error && (
+          <div style={{ 
+            margin: '16px', 
+            padding: '12px', 
+            backgroundColor: '#FEE2E2', 
+            border: '1px solid #FCA5A5', 
+            borderRadius: '8px',
+            color: '#991B1B',
+            fontSize: '14px'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div style={{ 
+            margin: '16px', 
+            padding: '12px', 
+            backgroundColor: '#D1FAE5', 
+            border: '1px solid #6EE7B7', 
+            borderRadius: '8px',
+            color: '#065F46',
+            fontSize: '14px'
+          }}>
+            {successMessage}
+          </div>
+        )}
+
         {!showNewForm ? (
           <>
             <div style={{ padding: '16px' }}>
@@ -419,9 +642,14 @@ export default function Schedule() {
                       </div>
                       <div className="appointment-info">
                         <div className="appointment-pet">
-                          {pets.find(p => p.id === appointment.petId)?.name || 'Unknown Pet'}
+                          {pets.find(p => p.id === appointment.petId)?.name || appointment.petName || 'Unknown Pet'}
                         </div>
                         <p className="appointment-vet">{appointment.vetName}</p>
+                        {appointment.vetAddress && (
+                          <p style={{ fontSize: '12px', color: '#6B7280', marginTop: '4px' }}>
+                            📍 {appointment.vetAddress}
+                          </p>
+                        )}
                         <p className="appointment-time">
                           {new Date(appointment.date).toLocaleDateString()} at {appointment.time}
                         </p>
@@ -432,7 +660,8 @@ export default function Schedule() {
                           fontSize: '12px',
                           fontWeight: 'bold',
                           backgroundColor: getStatusColor(appointment.status),
-                          color: 'white'
+                          color: 'white',
+                          marginTop: '8px'
                         }}>
                           {getStatusText(appointment.status)}
                         </div>
@@ -440,7 +669,7 @@ export default function Schedule() {
                     </div>
                     
                     {appointment.purpose && (
-                      <div style={{ marginBottom: '12px' }}>
+                      <div style={{ marginBottom: '12px', marginTop: '12px' }}>
                         <strong>Purpose:</strong> {appointment.purpose}
                       </div>
                     )}
@@ -448,6 +677,12 @@ export default function Schedule() {
                     {appointment.notes && (
                       <div style={{ marginBottom: '12px' }}>
                         <strong>Notes:</strong> {appointment.notes}
+                      </div>
+                    )}
+
+                    {appointment.vetAddress && (
+                      <div style={{ marginBottom: '12px', fontSize: '14px', color: '#6B7280' }}>
+                        📍 {appointment.vetAddress}
                       </div>
                     )}
 
@@ -605,9 +840,14 @@ export default function Schedule() {
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    style={{ flex: 1 }}
+                    disabled={saving}
+                    style={{ 
+                      flex: 1,
+                      opacity: saving ? 0.7 : 1,
+                      cursor: saving ? 'not-allowed' : 'pointer'
+                    }}
                   >
-                    Schedule Appointment
+                    {saving ? 'Scheduling...' : 'Schedule Appointment'}
                   </button>
                 </div>
               </form>
