@@ -577,8 +577,8 @@ export default function VetSettings() {
                     </div>
                   </div>
                   <div className="settings-text">
-                    <div className="settings-title">Profile Management</div>
-                    <p className="settings-subtitle">Manage your professional profile</p>
+                    <div className="settings-title" style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>Profile Management</div>
+                    <p className="settings-subtitle" style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Manage your professional profile</p>
                   </div>
                 </div>
                 <div className="settings-action">
@@ -641,8 +641,8 @@ export default function VetSettings() {
                     </div>
                   </div>
                   <div className="settings-text">
-                    <div className="settings-title">Notification Preferences</div>
-                    <p className="settings-subtitle">Set your notification settings</p>
+                    <div className="settings-title" style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>Notification Preferences</div>
+                    <p className="settings-subtitle" style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Set your notification settings</p>
                   </div>
                 </div>
                 <div className="settings-action">
@@ -655,8 +655,8 @@ export default function VetSettings() {
           <div style={{ padding: '16px' }}>
             <div className="form-container">
               <div className="form-header">
-                <h2 className="form-title">Profile Management</h2>
-                <p className="form-subtitle">Update your professional information</p>
+                <h2 className="form-title" style={{ color: '#1F2937', fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>Profile Management</h2>
+                <p className="form-subtitle" style={{ color: '#6B7280', fontSize: '14px', margin: 0 }}>Update your professional information</p>
               </div>
 
               <form onSubmit={handleSubmit}>
@@ -974,116 +974,259 @@ export default function VetSettings() {
           </div>
         ) : (
           <div style={{ padding: '16px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <button
+                onClick={() => setShowNotifications(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '18px',
+                  cursor: 'pointer',
+                  color: '#1F2937',
+                  padding: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                ← Back
+              </button>
+            </div>
             <div className="form-container">
               <div className="form-header">
-                <h2 className="form-title">Notification Preferences</h2>
-                <p className="form-subtitle">Choose what notifications you'd like to receive</p>
+                <h2 className="form-title" style={{ color: '#1F2937', fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>Notification Preferences</h2>
+                <p className="form-subtitle" style={{ color: '#6B7280', fontSize: '14px', margin: 0 }}>Choose what notifications you'd like to receive</p>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div className="settings-item">
-                  <div className="settings-content">
-                    <div className="settings-text">
-                      <div className="settings-title">New Appointments</div>
-                      <p className="settings-subtitle">Get notified when new appointments are booked</p>
-                    </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+                <div style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  border: '1px solid #E5E7EB',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>New Appointments</div>
+                    <p style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Get notified when new appointments are booked</p>
                   </div>
-                  <div className="settings-action">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        name="notifications.newAppointments"
-                        checked={formData.notifications.newAppointments}
-                        onChange={handleInputChange}
-                        style={{ display: 'none' }}
-                      />
-                      <div className={`toggle-slider ${formData.notifications.newAppointments ? 'active' : ''}`} />
-                    </label>
-                  </div>
+                  <label style={{
+                    position: 'relative',
+                    width: '48px',
+                    height: '28px',
+                    backgroundColor: formData.notifications.newAppointments ? '#F7931E' : '#D1D5DB',
+                    borderRadius: '14px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                    flexShrink: 0,
+                    marginLeft: '16px'
+                  }}>
+                    <input
+                      type="checkbox"
+                      name="notifications.newAppointments"
+                      checked={formData.notifications.newAppointments}
+                      onChange={handleInputChange}
+                      style={{ display: 'none' }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '2px',
+                      left: formData.notifications.newAppointments ? '22px' : '2px',
+                      width: '24px',
+                      height: '24px',
+                      backgroundColor: '#FFFFFF',
+                      borderRadius: '50%',
+                      transition: 'left 0.2s',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }} />
+                  </label>
                 </div>
 
-                <div className="settings-item">
-                  <div className="settings-content">
-                    <div className="settings-text">
-                      <div className="settings-title">Appointment Reminders</div>
-                      <p className="settings-subtitle">Reminders for upcoming appointments</p>
-                    </div>
+                <div style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  border: '1px solid #E5E7EB',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>Appointment Reminders</div>
+                    <p style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Reminders for upcoming appointments</p>
                   </div>
-                  <div className="settings-action">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        name="notifications.appointmentReminders"
-                        checked={formData.notifications.appointmentReminders}
-                        onChange={handleInputChange}
-                        style={{ display: 'none' }}
-                      />
-                      <div className={`toggle-slider ${formData.notifications.appointmentReminders ? 'active' : ''}`} />
-                    </label>
-                  </div>
+                  <label style={{
+                    position: 'relative',
+                    width: '48px',
+                    height: '28px',
+                    backgroundColor: formData.notifications.appointmentReminders ? '#F7931E' : '#D1D5DB',
+                    borderRadius: '14px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                    flexShrink: 0,
+                    marginLeft: '16px'
+                  }}>
+                    <input
+                      type="checkbox"
+                      name="notifications.appointmentReminders"
+                      checked={formData.notifications.appointmentReminders}
+                      onChange={handleInputChange}
+                      style={{ display: 'none' }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '2px',
+                      left: formData.notifications.appointmentReminders ? '22px' : '2px',
+                      width: '24px',
+                      height: '24px',
+                      backgroundColor: '#FFFFFF',
+                      borderRadius: '50%',
+                      transition: 'left 0.2s',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }} />
+                  </label>
                 </div>
 
-                <div className="settings-item">
-                  <div className="settings-content">
-                    <div className="settings-text">
-                      <div className="settings-title">Patient Updates</div>
-                      <p className="settings-subtitle">Updates about your patients' health records</p>
-                    </div>
+                <div style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  border: '1px solid #E5E7EB',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>Patient Updates</div>
+                    <p style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Updates about your patients' health records</p>
                   </div>
-                  <div className="settings-action">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        name="notifications.patientUpdates"
-                        checked={formData.notifications.patientUpdates}
-                        onChange={handleInputChange}
-                        style={{ display: 'none' }}
-                      />
-                      <div className={`toggle-slider ${formData.notifications.patientUpdates ? 'active' : ''}`} />
-                    </label>
-                  </div>
+                  <label style={{
+                    position: 'relative',
+                    width: '48px',
+                    height: '28px',
+                    backgroundColor: formData.notifications.patientUpdates ? '#F7931E' : '#D1D5DB',
+                    borderRadius: '14px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                    flexShrink: 0,
+                    marginLeft: '16px'
+                  }}>
+                    <input
+                      type="checkbox"
+                      name="notifications.patientUpdates"
+                      checked={formData.notifications.patientUpdates}
+                      onChange={handleInputChange}
+                      style={{ display: 'none' }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '2px',
+                      left: formData.notifications.patientUpdates ? '22px' : '2px',
+                      width: '24px',
+                      height: '24px',
+                      backgroundColor: '#FFFFFF',
+                      borderRadius: '50%',
+                      transition: 'left 0.2s',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }} />
+                  </label>
                 </div>
 
-                <div className="settings-item">
-                  <div className="settings-content">
-                    <div className="settings-text">
-                      <div className="settings-title">Emergency Alerts</div>
-                      <p className="settings-subtitle">Critical emergency notifications</p>
-                    </div>
+                <div style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  border: '1px solid #E5E7EB',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>Emergency Alerts</div>
+                    <p style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Critical emergency notifications</p>
                   </div>
-                  <div className="settings-action">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        name="notifications.emergencyAlerts"
-                        checked={formData.notifications.emergencyAlerts}
-                        onChange={handleInputChange}
-                        style={{ display: 'none' }}
-                      />
-                      <div className={`toggle-slider ${formData.notifications.emergencyAlerts ? 'active' : ''}`} />
-                    </label>
-                  </div>
+                  <label style={{
+                    position: 'relative',
+                    width: '48px',
+                    height: '28px',
+                    backgroundColor: formData.notifications.emergencyAlerts ? '#F7931E' : '#D1D5DB',
+                    borderRadius: '14px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                    flexShrink: 0,
+                    marginLeft: '16px'
+                  }}>
+                    <input
+                      type="checkbox"
+                      name="notifications.emergencyAlerts"
+                      checked={formData.notifications.emergencyAlerts}
+                      onChange={handleInputChange}
+                      style={{ display: 'none' }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '2px',
+                      left: formData.notifications.emergencyAlerts ? '22px' : '2px',
+                      width: '24px',
+                      height: '24px',
+                      backgroundColor: '#FFFFFF',
+                      borderRadius: '50%',
+                      transition: 'left 0.2s',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }} />
+                  </label>
                 </div>
 
-                <div className="settings-item">
-                  <div className="settings-content">
-                    <div className="settings-text">
-                      <div className="settings-title">Promotional Emails</div>
-                      <p className="settings-subtitle">Receive updates about new features and offers</p>
-                    </div>
+                <div style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  border: '1px solid #E5E7EB',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: '#1F2937', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>Promotional Emails</div>
+                    <p style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Receive updates about new features and offers</p>
                   </div>
-                  <div className="settings-action">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        name="notifications.promotionalEmails"
-                        checked={formData.notifications.promotionalEmails}
-                        onChange={handleInputChange}
-                        style={{ display: 'none' }}
-                      />
-                      <div className={`toggle-slider ${formData.notifications.promotionalEmails ? 'active' : ''}`} />
-                    </label>
-                  </div>
+                  <label style={{
+                    position: 'relative',
+                    width: '48px',
+                    height: '28px',
+                    backgroundColor: formData.notifications.promotionalEmails ? '#F7931E' : '#D1D5DB',
+                    borderRadius: '14px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                    flexShrink: 0,
+                    marginLeft: '16px'
+                  }}>
+                    <input
+                      type="checkbox"
+                      name="notifications.promotionalEmails"
+                      checked={formData.notifications.promotionalEmails}
+                      onChange={handleInputChange}
+                      style={{ display: 'none' }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '2px',
+                      left: formData.notifications.promotionalEmails ? '22px' : '2px',
+                      width: '24px',
+                      height: '24px',
+                      backgroundColor: '#FFFFFF',
+                      borderRadius: '50%',
+                      transition: 'left 0.2s',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }} />
+                  </label>
                 </div>
               </div>
 
@@ -1095,11 +1238,12 @@ export default function VetSettings() {
                   style={{ 
                     flex: 1, 
                     backgroundColor: '#f0f0f0', 
-                    color: '#333',
-                    border: '1px solid #ccc'
+                    color: '#1F2937',
+                    border: '1px solid #ccc',
+                    fontWeight: '500'
                   }}
                 >
-                  Back
+                  Cancel
                 </button>
                 <button
                   type="button"
