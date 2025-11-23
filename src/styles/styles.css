@@ -1530,6 +1530,28 @@ body {
   visibility: visible !important;
   opacity: 1 !important;
   position: relative !important;
+  width: 100% !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Ensure login content allows scrolling and shows register section */
+.login-content {
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.login-content .register-section {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  margin-top: 32px !important;
+  padding-top: 24px !important;
+  padding-bottom: 24px !important;
+  width: 100% !important;
 }
 
 .register-text {

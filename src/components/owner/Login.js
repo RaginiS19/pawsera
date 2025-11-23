@@ -187,12 +187,10 @@ export default function OwnerLogin() {
             flex: 1, 
             WebkitOverflowScrolling: 'touch',
             paddingBottom: '40px',
-            minHeight: 0,
-            height: '100%',
-            maxHeight: '100%'
+            minHeight: 0
           }}>
-            <div className="login-container" style={{ minHeight: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 16px 40px 16px' }}>
-              <div className="login-content" style={{ width: '100%', maxWidth: '420px', paddingBottom: '20px' }}>
+            <div className="login-container" style={{ minHeight: 'auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 16px 40px 16px' }}>
+              <div className="login-content" style={{ width: '100%', maxWidth: '420px', paddingBottom: '40px' }}>
         {/* Brand Section */}
         <div className="brand-section">
           <div className="logo-container">
@@ -267,17 +265,20 @@ export default function OwnerLogin() {
           </form>
 
           <div className="register-section" style={{ 
-            marginTop: '24px', 
+            marginTop: '32px', 
             paddingTop: '24px', 
-            paddingBottom: '20px',
-            borderTop: '1px solid #E5E7EB',
+            paddingBottom: '24px',
+            borderTop: '2px solid #E5E7EB',
             textAlign: 'center',
             width: '100%',
-            display: 'block',
-            visibility: 'visible',
-            opacity: 1,
+            display: 'block !important',
+            visibility: 'visible !important',
+            opacity: '1 !important',
             position: 'relative',
-            zIndex: 10
+            zIndex: 10,
+            backgroundColor: '#FFFFFF',
+            borderRadius: '8px',
+            marginBottom: '20px'
           }}>
             <p className="register-text" style={{ 
               fontSize: '15px', 
